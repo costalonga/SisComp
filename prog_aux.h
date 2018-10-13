@@ -1,10 +1,12 @@
 #ifndef PROG_PRINCIPAIS_PROG_AUX_H
 #define PROG_PRINCIPAIS_PROG_AUX_H
 #define TAM_NOME 3
+#define MAX_PROGS 60
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 /* ---------- VARIAVEIS ---------- */
 
@@ -13,13 +15,10 @@
 typedef struct carac_progs
 {
     char nome[TAM_NOME];
-    int inicio;
-    int duracao;
+    intmax_t inicio;
+    intmax_t duracao;
     int tipo;
-} carac_Progs;
-
-// Vetor que armazena os segundos ja ocupados.
-bool vec_Segundos[60];
+}carac_progs;
 
 
 /* ---------- FUNÇOES ---------- */
@@ -28,16 +27,16 @@ bool vec_Segundos[60];
 int analisa_buffer(char* s);
 
 // Inicializa o vetor com nenhum espaço ocupado (falso)
-void ini_Vetor(bool vec[60]);
-
-// Armazena informações dos programas.
-void preenche_Struct(carac_Progs cp);
-
-// Insere na fila.
-void insere_Fila(carac_Progs cp);
+void ini_Vetor(bool vec[60], struct carac_progs v[]);
 
 // Recebe a string e retorna o nome, inicio e duração do processo.
-carac_Progs analisa_RealTime(char buf[25], int tipo);
+carac_progs analisa_RealTime(struct carac_progs v[], char buf[], int tipo, int cont);
+
+// Usado para acessar a posição do vetor em que se encontra o programa (caso I=PX, procura por PX no vetor).
+void acessa_vec_Struct(struct carac_progs v[], char s[], intmax_t* ini, int cont);
+
+// Salva as structs no vetor de struct, para obter os dados quando necessário
+void salva_no_Vetor(carac_progs st, struct carac_progs v[], int cont);
 
 
 

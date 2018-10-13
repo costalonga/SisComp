@@ -1,12 +1,12 @@
 #include "prog_aux.h"
 
-
-int analisa_buffer(char* s) {
+// Chamada na main
+int analisa_buffer(char s[]) {
 
     int tipo;
     int i = 5;
-    char* aux = (char*)malloc(sizeof(char)*30);
-    aux = s;
+    char aux[25];
+    strcpy(aux, s);
 
     while(aux[i] != ' ') {
         i++;
@@ -30,68 +30,113 @@ int analisa_buffer(char* s) {
 }
 
 /* ------------------- ------------------- */
+// Chamada na main
+carac_progs analisa_RealTime(struct carac_progs v[], char buf[], int tipo, int cont) {
 
-void preenche_Struct(carac_Progs cp) {
-
-}
-
-/* ------------------- ------------------- */
-
-void insere_Fila(carac_Progs cp) {
-
-}
-
-/* ------------------- ------------------- */
-
-carac_Progs analisa_RealTime(char buf[25], int tipo) {
-
-    carac_Progs st;
+    carac_progs st;
     int i, a = 0;
     char dur_Char[2];
     char ini_Char[2];
+    char ini_Prog[2];
+    char nome[TAM_NOME];
+    char* endptr;
 
     st.tipo = tipo;
+   
+    i = 4;
 
-    for(i = 4; buf[i] != ' '; i++) {
-        st.nome[a] = buf[i];
+    while(buf[i] != ' ') {      
+        nome[a] = buf[i];
         a++;
+        i++;
     }
-    printf("nome: %s\n", st.nome);
+
+    strcpy(st.nome, nome);
+    st.nome[a] = '\0';
 
     a = 0;
     i = i + 3;
 
-    for(i = 9; buf[i] != ' '; i++) {
+    while(buf[i] != ' ') {
         ini_Char[a] = buf[i];
         a++;
+        i++;
     }
 
-    printf("ini char: %s\n", ini_Char);
-    st.inicio = atoi(ini_Char);
+    if(ini_Char[0] == 'p' | ini_Char[0] == 'P') {
+        acessa_vec_Struct(v, ini_Char, &st.inicio, cont);
+    }
 
+    else {
+        st.inicio = strtoimax(ini_Char, &endptr, 10);
+    }
+    
     a = 0;
     i = i +3;
 
-    for(i = i; buf[i] != ' '; i++) {
-        dur_Char[a] = buf[i];           // SEGFAULT no ultimo teste??
+    while(buf[i] != '\0') {
+        // Caso mude o tamanho do vetor, ajeitar aqui pra não dar erro na struct.
+        dur_Char[a] = buf[i];
         a++;
+        i++;
+            
     }
 
-    st.duracao = atoi(dur_Char);
+    st.duracao = strtoimax(dur_Char, &endptr, 10);
 
     return st;
-
-
 }
 
-void ini_Vetor(bool vec[60]) {
+/* ------------------- ------------------- */
+// Chamada na main.
+void ini_Vetor(bool vec[60], struct carac_progs v[]) {
 
     int x;
 
-    for(x = 0; x < 60; x++) {
+    for(x = 0; x < 60; x++) 
         vec[x] = false;
+
+    for(x = 0; x < 60; x++) {
+        strcpy(v[x].nome, "NULL");
+        v[x].inicio = 0;
+        v[x].duracao = 0;
+        v[x].tipo = -1;
     }
 }
+
+/* ------------------- ------------------- */
+// Chamada na analisa_RealTime
+void acessa_vec_Struct(struct carac_progs v[], char s[], intmax_t* ini, int cont) {
+
+    int i;
+
+    for(i = 0; i < cont; i++) {
+        if(strcmp(v[i].nome,s) == 0) {
+            *ini = v[i].inicio + v[i].duracao; 
+            return;
+        }
+    }
+
+    printf("O vetor estava vazio.\n");
+}
+
+/* ------------------- ------------------- */
+// Chamada na main
+void salva_no_Vetor(carac_progs st, struct carac_progs v[], int cont) {
+
+        if(cont == 60) {
+            printf("Vetor cheio. \n");
+            return;
+        }
+            
+        strcpy(v[cont].nome, st.nome);
+        v[cont].inicio = st.inicio;
+        v[cont].duracao = st.duracao;
+        v[cont].tipo = st.tipo;
+        
+    }
+
+/* ------------------- ------------------- */
 
 
 
