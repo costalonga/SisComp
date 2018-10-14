@@ -7,6 +7,7 @@ typedef struct prog_Fila
 {
     char nome[TAM_NOME];
     int PR;
+    int arrival; //tempo para criterio de desempate
 } pFila;
 
 
