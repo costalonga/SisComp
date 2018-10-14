@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "prog_aux.h"
+#include "fila.h"
 #define BUF_SIZE 17
 #define TAM_NOME 3
 #define MAX_PROGS 60
@@ -29,7 +30,7 @@
 // Usada para terminar o programa quando o .txt for completamente lido.
 void handler(int sinal);
 
-// Usada para imprimir o nome dos programas na struct (TESTE).
+// Usada para imprimir o nome dos programas no vetor de RT (TESTE).
 void imprime(struct carac_progs v[], int cont);
 
 
@@ -132,7 +133,11 @@ int main() {
             case 1:
                 printf("Real-Time.\n");
                 st = analisa_RealTime(prog_Rodando, buffer, tipo, cont);
-                salva_no_Vetor(st, prog_Rodando, cont);
+                salva_no_Vetor(st, prog_Rodando, cont);     // Vetor usado para checar o inicio e duracao do programa.
+                // Coloca na fila.
+                // Ordena fila baseado nas prioridades.
+                // Verifica primeiro da fila (pode ou não rodar?)
+                // Se pode executar, executa.
                 printf("Nome RT: %s   INI: %d   DUR: %d   \n", st.nome, st.inicio, st.duracao);
                 cont++;
                 break;

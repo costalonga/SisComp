@@ -10,7 +10,7 @@
 
 /* ---------- VARIAVEIS ---------- */
 
-// Struct que armazena os dados dos programas.
+// Struct que armazena os dados dos programas RT no vetor de RT rodando.
 
 typedef struct carac_progs
 {
