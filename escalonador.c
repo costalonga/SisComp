@@ -10,12 +10,7 @@
 #define MAX_PROGS 60
 
 /*
-
-
- TODO: Estrutura que armazena os arquivos
  TODO: Condição de termino do programa (nao qnd txt for lido)
-
-
 */
 
 
@@ -47,9 +42,11 @@ int main() {
 
     // String em que armazena as linhas do exec.txt
     char buffer[BUF_SIZE];
+    
 
     // Struct para armazenar os dados dos programas.
     carac_progs st;
+    pFila p;
 
     // Variáveis Real-Time.
     int ini = 0;
@@ -64,12 +61,12 @@ int main() {
 
     /* ---------------------- VARIAVEIS ESCALONADOR ---------------------- */
 
-
+    
     if(buffer == NULL) {
         printf("Erro alocando memoria. Saindo do programa.\n");
         exit(-1);
     }
-
+    
 
 
     // Criando canal de comunicação entre escalonador e interpretador.
@@ -84,9 +81,11 @@ int main() {
         close(fd[0]);
 
         /* ------- VARIAVEIS INTERPRETADOR ------- */
-
+        
         FILE *arq;
-        __ssize_t qtd_Char;
+        //__ssize_t qtd_Char;
+        __ssize_t read;
+        size_t len = 0;
         int fim;
 
         /* ------- VARIAVEIS INTERPRETADOR ------- */
@@ -98,11 +97,18 @@ int main() {
 
         // Transmitindo dados para o escalonador (linha por linha).
 
+        //
+        while(fgets(buffer, BUF_SIZE, arq) != NULL) {
 
-        while(fgets(buffer, sizeof(buffer), arq) != NULL) {
+            if(strlen(buffer) == 1) {
 
-            d_TR = write(fd[1], buffer, strlen(buffer) + 1);
-            sleep(1);
+            }
+
+            else {
+                d_TR = write(fd[1], buffer, strlen(buffer) + 1);
+                
+                sleep(1);
+            }
         }
 
         // Avisa o escalonador que o arquivo terminou.
@@ -129,28 +135,30 @@ int main() {
 
         tipo = analisa_buffer(buffer);
 
-        switch(tipo) {
-            case 1:
-                printf("Real-Time.\n");
-                st = analisa_RealTime(prog_Rodando, buffer, tipo, cont);
-                salva_no_Vetor(st, prog_Rodando, cont);     // Vetor usado para checar o inicio e duracao do programa.
-                // Coloca na fila.
-                // Ordena fila baseado nas prioridades.
-                // Verifica primeiro da fila (pode ou não rodar?)
-                // Se pode executar, executa.
-                printf("Nome RT: %s   INI: %d   DUR: %d   \n", st.nome, st.inicio, st.duracao);
-                cont++;
-                break;
+            switch(tipo) {
+                case 1:
+                    st = analisa_RealTime(prog_Rodando, buffer, tipo, cont);
+                    salva_no_Vetor(st, prog_Rodando, cont);     
+                    p = pFila_RT(st);
+                    insere_FilaProntos(p);
+                    //ordena_Prioridades();
+                    // Verifica primeiro da fila (pode ou não rodar?)
+                    // Se pode executar, executa.
+                    cont++;
+                    break;
 
-            case 2:
-                printf("Prioridades.\n");
-                break;
+                case 2:
+                    p = pFila_PR(buffer);
+                    insere_FilaProntos(p);
+                    break;
 
-            case 3:
-                printf("RR.\n");
-		        break;
-        }
-
+                case 3:
+                    p = pFila_RR(buffer);
+                    insere_FilaProntos(p);
+                    break;
+            }
+        imprime_Fila();
+        
     }
 }
 

@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <inttypes.h>
+#include "fila.h"
 
 /* ---------- VARIAVEIS ---------- */
 
@@ -31,6 +32,15 @@ void ini_Vetor(bool vec[60], struct carac_progs v[]);
 
 // Recebe a string e retorna o nome, inicio e duração do processo.
 carac_progs analisa_RealTime(struct carac_progs v[], char buf[], int tipo, int cont);
+
+// Recebe a struct com dados do RT e preenche a pFila para colocar na fila de prontos.
+pFila pFila_RT(carac_progs st);
+
+// Recebe a string e retorna a struct pFila com a prioridade e nome do PRIORIDADES para colocar na fila de prontos.
+pFila pFila_PR(char buf[]);
+
+// Recebe a string e retorna a struct pFila com a prioridade(8) e nome do RR para colocar na fila de prontos.
+pFila pFila_RR(char buf[]);
 
 // Usado para acessar a posição do vetor em que se encontra o programa (caso I=PX, procura por PX no vetor).
 void acessa_vec_Struct(struct carac_progs v[], char s[], intmax_t* ini, int cont);

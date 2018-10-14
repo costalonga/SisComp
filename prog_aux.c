@@ -1,18 +1,13 @@
 #include "prog_aux.h"
+#include "fila.h"
 
 // Chamada na main
 int analisa_buffer(char s[]) {
 
     int tipo;
-    int i = 5;
-    char aux[25];
+    int i = 7;
+    char aux[18];
     strcpy(aux, s);
-
-    while(aux[i] != ' ') {
-        i++;
-    }
-
-    i++;
 
     if(aux[i] == 'I' || aux[i] == 'i') {
         tipo = 1;       // Real-Time
@@ -24,9 +19,11 @@ int analisa_buffer(char s[]) {
         return tipo;    // Prioridades
     }
 
-    //Else Round Robin
-    tipo = 3;       // RR
-    return tipo;
+    else
+        return 3;
+
+
+    
 }
 
 /* ------------------- ------------------- */
@@ -138,5 +135,69 @@ void salva_no_Vetor(carac_progs st, struct carac_progs v[], int cont) {
 
 /* ------------------- ------------------- */
 
+pFila pFila_PR(char buf[]) {
+
+    char nome[TAM_NOME];
+    int i, a = 0;
+    pFila p;
+    char PR[2];
+    char* endptr;
+
+    i = 4;
+
+    while(buf[i] != ' ') {
+        nome[a] = buf[i];
+        i++;
+        a++;
+    }
+    nome[a] = '\0';
+    
+    strcpy(p.nome, nome);
+
+    i = i + 4;
+    a = 0;
+
+    PR[a] = buf[i];
+    PR[++a] = '\0';
+
+    p.PR = strtoimax(PR, &endptr, 10);
+
+    return p;
 
 
+
+}
+
+
+pFila pFila_RT(carac_progs st) {
+
+    pFila p;
+
+    strcpy(p.nome, st.nome);        // Cuidado com \0
+    p.PR = -1;
+
+    return p;
+}
+
+pFila pFila_RR(char buf[]) {
+
+    char nome[TAM_NOME];
+    int i, a = 0;
+    pFila p;
+    char* endptr;
+
+    i = 4;
+    
+    while(i < (strlen(buf) - 1)) {
+        nome[a] = buf[i];
+        i++;
+        a++;
+    }
+
+    nome[a] = '\0';
+    strcpy(p.nome, nome);
+
+    p.PR = 8;
+
+    return p;
+}
