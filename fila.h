@@ -37,7 +37,10 @@ pFila remove_FilaProntos();
 // Ordena a fila de acordo com as prioridades dos programas.
 void ordena_Prioridades();
 
-//
+// Verifica se a fila esta ordenada.
+bool checa_Ordenada();
+
+// Imprime a fila com o nome e prioridade dos programas (prontos).
 void imprime_Fila();
 
 #endif //PROG_PRINCIPAIS_FILA_H

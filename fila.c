@@ -74,18 +74,60 @@ pFila remove_FilaProntos() {
 }
 
 /* -------------------------------- */
-/*
+
 void ordena_Prioridades() {
+
+    int i, j;
+    bool troca;
+    pFila temp;
+    bool ord;
+
+    ord = checa_Ordenada();
+    
+    if(ord == false) {
+
+        for(i = 0; i < total-1; i++) {
+
+            troca = false;
+
+            for(j = 0; j < total-1; j++) {
+
+                if(prontos[j].PR > prontos[j+1].PR) {
+                    strcpy(temp.nome, prontos[j].nome);
+                    temp.PR = prontos[j].PR;
+                    strcpy(prontos[j].nome, prontos[j+1].nome);
+                    prontos[j].PR = prontos[j+1].PR;
+                    strcpy(prontos[j+1].nome, temp.nome);
+                    prontos[j+1].PR = temp.PR;
+                    troca = true;
+                }
+            }
+
+            if(!troca)
+                break;
+            
+        }
+
+    }
+    
+}
+
+/* -------------------------------- */
+
+bool checa_Ordenada() {
 
     int i;
 
-    for(i = 0; i < total; i++) {
+    for(i = 0; i < total-1; i++) {
 
-        if(prontos[i].PR )
+        if(prontos[i].PR > prontos[i+1].PR)
+            return false;
     }
-}
-*/
 
+    return true;
+}
+
+/* -------------------------------- */
 void imprime_Fila() {
 
     int i;

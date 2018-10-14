@@ -134,14 +134,14 @@ int main() {
         d_RE = read(fd[0], buffer , sizeof(buffer));
 
         tipo = analisa_buffer(buffer);
-
+        
             switch(tipo) {
                 case 1:
                     st = analisa_RealTime(prog_Rodando, buffer, tipo, cont);
                     salva_no_Vetor(st, prog_Rodando, cont);     
                     p = pFila_RT(st);
                     insere_FilaProntos(p);
-                    //ordena_Prioridades();
+                    ordena_Prioridades();
                     // Verifica primeiro da fila (pode ou não rodar?)
                     // Se pode executar, executa.
                     cont++;
@@ -150,6 +150,7 @@ int main() {
                 case 2:
                     p = pFila_PR(buffer);
                     insere_FilaProntos(p);
+                    ordena_Prioridades();
                     break;
 
                 case 3:
@@ -158,7 +159,8 @@ int main() {
                     break;
             }
         imprime_Fila();
-        
+        //imprime(prog_Rodando, cont);
+               
     }
 }
 

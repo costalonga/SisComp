@@ -168,6 +168,7 @@ pFila pFila_PR(char buf[]) {
 
 }
 
+/* ------------------- ------------------- */
 
 pFila pFila_RT(carac_progs st) {
 
@@ -178,6 +179,8 @@ pFila pFila_RT(carac_progs st) {
 
     return p;
 }
+
+/* ------------------- ------------------- */
 
 pFila pFila_RR(char buf[]) {
 
