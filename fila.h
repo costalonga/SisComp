@@ -8,39 +8,36 @@
 #define TAM_NOME 3
 
 // Struct que armazena o nome do programa e a prioridade na fila de PRONTOS.
-typedef struct prog_Fila
+struct No
 {
     char nome[TAM_NOME];
     intmax_t PR;
-} pFila;
+    struct No* prox;
+};
+
+struct Fila
+{
+    struct No* frente;
+    struct No* fim;
+};
 
 
+// Cria um nó com nome e prioridade para inserir na fila.
+struct No* cria_No(char nome[], intmax_t PR);
 
-// Verifica primeiro prog. da fila de prontos (nome e prioridade)
-pFila peek();
+// Cria uma fila (lista encadeada).
+struct Fila* cria_Fila();
 
-// Verifica se a fila está vazia.
-bool vazia();
+// Insere um programa (Nó) na fila.
+void insere_FilaProntos(struct Fila* f, char nome[], intmax_t PR);
 
-// Verifica se a fila está cheia.
-bool cheia();
-
-// Verifica quantos programas estão na fila (opcional).
-int tam();
-
-// Insere um programa na ultima posição da fila.
-void insere_FilaProntos(pFila p);
-
-// Remove o programa da primeira posição.
-pFila remove_FilaProntos();
+// Remove o programa (Nó) da primeira posição.
+struct No* remove_FilaProntos();
 
 // Ordena a fila de acordo com as prioridades dos programas.
-void ordena_Prioridades();
-
-// Verifica se a fila esta ordenada.
-bool checa_Ordenada();
+void ordena_Prioridades(struct Fila* f);
 
 // Imprime a fila com o nome e prioridade dos programas (prontos).
-void imprime_Fila();
+void imprime_Fila(struct Fila* f);
 
 #endif //PROG_PRINCIPAIS_FILA_H

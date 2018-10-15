@@ -204,3 +204,50 @@ pFila pFila_RR(char buf[]) {
 
     return p;
 }
+
+/* ------------------- ------------------- */
+
+bool verificaRT_vetorSegundos(bool v[], intmax_t ini, intmax_t fim) {
+
+    intmax_t i;
+    ini--;
+    fim--;
+
+    if(v[ini] == true) {
+        printf("Ja existe algum processo rodando nesse tempo.\n");
+        return false;
+    }
+
+    else {
+        for(i = ini; i < fim; i++) {
+            if(v[i] == true) {
+                printf("Ja existe algum processo rodando nesse tempo.\n");
+                return false;
+            }
+        }
+
+    for(i = ini; i < fim; i++) {
+        v[i] = true;
+    }
+        return true;
+    }
+}
+
+/* ------------------- ------------------- */
+
+void verifica_vecRT(struct No* n, carac_progs c, int cont, carac_progs v[]) {
+
+    int i;
+   
+    strcpy(c.nome,n->nome);
+    for(i = 0; i < cont; i++) {
+        if(strcmp(v[i].nome, n->nome) == 0) {
+            c.inicio = v[i].inicio;
+            c.duracao = v[i].duracao;
+            return;
+        }
+    }
+
+    printf("Struct correspondente nao encontrada no vetor de RT.\n");
+    return;
+}

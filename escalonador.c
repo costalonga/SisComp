@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "prog_aux.h"
 #include "fila.h"
 #define BUF_SIZE 17
@@ -27,6 +28,9 @@ void handler(int sinal);
 
 // Usada para imprimir o nome dos programas no vetor de RT (TESTE).
 void imprime(struct carac_progs v[], int cont);
+
+// Imprime o vetor de segundos (TESTE).
+void imprime_seg(bool v[]);
 
 
 int main() {
@@ -53,11 +57,14 @@ int main() {
     int dur = 0;
     int cont = 0; // Contador da qtd. de structs no vetor.
 
-    // Vetor que armazena o programas rodando.
-    struct carac_progs prog_Rodando[MAX_PROGS];
+    // Vetor que armazena o programas rodando RT.
+    struct carac_progs prog_RodandoRT[MAX_PROGS];
 
     // Vetor que armazena os segundos ja ocupados.
     bool vec_Segundos[60];
+
+    // Variavel utilizada para verificar se o processo RT pode rodar.
+    bool permissao = false;
 
     /* ---------------------- VARIAVEIS ESCALONADOR ---------------------- */
 
@@ -128,39 +135,83 @@ int main() {
 
     close(fd[1]);
 
-    ini_Vetor(vec_Segundos, prog_Rodando);
+    // Inicializa o vetor de segundos, e vetor contendo os RT.
+    ini_Vetor(vec_Segundos, prog_RodandoRT);
 
+    // Fila dos processos PRONTOS para executar.
+    struct Fila* f = cria_Fila();
+
+    // while deve terminar quando nou houver mais processos executanto - arrumar depois.
     while(d_RE != -1) {
         d_RE = read(fd[0], buffer , sizeof(buffer));
 
+        // Retorna o tipo do processo.
         tipo = analisa_buffer(buffer);
+
+        struct No* n;
         
             switch(tipo) {
                 case 1:
-                    st = analisa_RealTime(prog_Rodando, buffer, tipo, cont);
-                    salva_no_Vetor(st, prog_Rodando, cont);     
-                    p = pFila_RT(st);
-                    insere_FilaProntos(p);
-                    ordena_Prioridades();
-                    // Verifica primeiro da fila (pode ou não rodar?)
-                    // Se pode executar, executa.
-                    cont++;
+                    st = analisa_RealTime(prog_RodandoRT, buffer, tipo, cont);
+
+                    // Salva no vetor de RT  
+                    salva_no_Vetor(st, prog_RodandoRT, cont);   
+                    cont++; 
+
+                    // Recebe infos p colocar na fila de prontos (nome e PR) 
+                    p = pFila_RT(st);     
+                    
+                    // Coloca na fila de prontos
+                    insere_FilaProntos(f, p.nome, p.PR);
+
+                    // Ordena a fila            
+                    ordena_Prioridades(f);          
+
+                    // Remove o primeiro elemento (maior prioridade)                
+                    n = remove_FilaProntos(f);                      
+
+                    // Se for RT
+                    if(n->PR == -1) {
+                        // Verifica tempo de inicio e duracao no vetor dos RT.
+                        verifica_vecRT(n, st, cont, prog_RodandoRT);  
+
+                        // Verifica se o programa pode rodar no tempo desejado.  
+                        permissao = verificaRT_vetorSegundos(vec_Segundos, st.inicio, st.duracao);
+
+                        // Se puder..
+                        if(permissao == true) {
+                            printf("Programa sendo executado: %s   De: %ld ate %ld.\n", st.nome, st.inicio, st.duracao);
+
+                            // Executa prog.
+                            // Insere na lista dos progs rodando.
+                        }
+
+                    }
+
+                    // Se for de RR
+                     else if(n->PR == 8) {
+
+                     }
+
+                    // Se for PR
+                     else {
+
+                     }
                     break;
 
                 case 2:
                     p = pFila_PR(buffer);
-                    insere_FilaProntos(p);
-                    ordena_Prioridades();
+                    insere_FilaProntos(f, p.nome, p.PR);
+                    ordena_Prioridades(f);
                     break;
 
                 case 3:
                     p = pFila_RR(buffer);
-                    insere_FilaProntos(p);
+                    insere_FilaProntos(f, p.nome, p.PR);
                     break;
             }
-        imprime_Fila();
-        //imprime(prog_Rodando, cont);
-               
+        
+              imprime_Fila(f); 
     }
 }
 
@@ -176,5 +227,14 @@ void imprime(struct carac_progs v[], int cont){
     int i;
     for(i = 0; i < cont; i++) {
         printf("Valor da posicao %d: %s\n", i, v[i].nome);
+    }
+}
+
+void imprime_seg(bool v[]) {
+    
+    int i;
+
+    for(i = 0; i < 60; i++) {
+        printf("Valor do segundo %d: %d\n", i, v[i]);
     }
 }

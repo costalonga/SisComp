@@ -21,6 +21,11 @@ typedef struct carac_progs
     int tipo;
 }carac_progs;
 
+typedef struct pFila
+{
+    char nome[TAM_NOME];
+    intmax_t PR;
+}pFila;
 
 /* ---------- FUNÇOES ---------- */
 
@@ -48,7 +53,11 @@ void acessa_vec_Struct(struct carac_progs v[], char s[], intmax_t* ini, int cont
 // Salva as structs no vetor de struct, para obter os dados quando necessário
 void salva_no_Vetor(carac_progs st, struct carac_progs v[], int cont);
 
+// Verifica se o RT tem tempo disponivel para ser executado.
+bool verificaRT_vetorSegundos(bool v[], intmax_t ini, intmax_t fim);
 
+// Verifica o inico e duracao do RT no vetor que contem os RT.
+void verifica_vecRT(struct No* n, carac_progs c, int cont, carac_progs v[]);
 
 
 #endif //PROG_PRINCIPAIS_PROG_AUX_H

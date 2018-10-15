@@ -1,138 +1,107 @@
 #include "fila.h"
 #include "prog_aux.h"
-#define MAX 15
 
-pFila prontos[MAX];
-int frente = 0;
-int fim = -1;
-int total = 0;
 
-/* -------------------------------- */
+struct No* cria_No(char nome[], intmax_t PR) {
 
-pFila peek() {
-    return prontos[frente];
+    struct No* temp = (struct No*)malloc(sizeof(struct No));
+    strcpy(temp->nome, nome);
+    temp->PR = PR;
 }
 
 /* -------------------------------- */
 
-bool vazia() {
-    return total == 0;
+struct Fila* cria_Fila() {
+    struct Fila* f = (struct Fila*)malloc(sizeof(struct Fila));
+    f->frente = f-> fim = NULL;
+    return f;
 }
 
 /* -------------------------------- */
 
-bool cheia() {
-    return total == MAX;
-}
+void insere_FilaProntos(struct Fila* f, char nome[], intmax_t PR) {
 
-/* -------------------------------- */
+    struct No* temp = cria_No(nome, PR);
 
-int tam() {
-    return total;
-}
-
-/* -------------------------------- */
-
-void insere_FilaProntos(pFila p) {
-
-    if(cheia() == true) {
-        printf("A fila ja esta cheia.\n");
+    if(f->fim == NULL)
+    {
+        f->frente = f->fim = temp;
         return;
     }
 
-    else {
-
-        if(fim == MAX-1) {
-            fim = -1;
-            //printf("Fila cheia.\n");
-            //return;
-        }
-
-        fim++;
-        strcpy(prontos[fim].nome, p.nome);
-        prontos[fim].PR = p.PR;
-        total++;
-    }
-}
-
-/* -------------------------------- */
-
-pFila remove_FilaProntos() {
-
-    pFila primeiro;
-
-    strcpy(primeiro.nome, prontos[frente].nome);
-    primeiro.PR = prontos[frente].PR;
-    frente++;
-
-    if(frente == MAX) {
-        frente = 0;
-    }
-
-    total--;
-    return primeiro;
-}
-
-/* -------------------------------- */
-
-void ordena_Prioridades() {
-
-    int i, j;
-    bool troca;
-    pFila temp;
-    bool ord;
-
-    ord = checa_Ordenada();
+    f->fim->prox = temp;
+    f->fim = temp;
     
-    if(ord == false) {
+}
 
-        for(i = 0; i < total-1; i++) {
+/* -------------------------------- */
 
-            troca = false;
+struct No* remove_FilaProntos(struct Fila* f) {
 
-            for(j = 0; j < total-1; j++) {
+    if(f->frente == NULL) {
+        return NULL;
+    }
 
-                if(prontos[j].PR > prontos[j+1].PR) {
-                    strcpy(temp.nome, prontos[j].nome);
-                    temp.PR = prontos[j].PR;
-                    strcpy(prontos[j].nome, prontos[j+1].nome);
-                    prontos[j].PR = prontos[j+1].PR;
-                    strcpy(prontos[j+1].nome, temp.nome);
-                    prontos[j+1].PR = temp.PR;
-                    troca = true;
-                }
+    struct No* temp = f->frente;
+    f->frente = f->frente->prox;
+
+    if(f->frente == NULL) {
+        f->fim = NULL;
+    }
+
+    return temp;
+}
+
+/* -------------------------------- */
+
+void ordena_Prioridades(struct Fila* f) {
+
+    struct No* ptr1;
+    struct No* lptr = NULL;
+    bool troca;
+    //bool ord;
+
+    if(f == NULL)
+        return;
+    
+    do
+    {
+        troca = false;
+        ptr1 = f->frente;
+
+        while(ptr1->prox != lptr) {
+
+            if(ptr1 -> PR > ptr1->prox->PR) {
+                intmax_t temp1 = ptr1->PR;
+                char temp2[TAM_NOME];
+                strcpy(temp2, ptr1->nome);
+
+                strcpy(ptr1->nome, ptr1->prox->nome);
+                ptr1->PR = ptr1->prox->PR;
+                strcpy(ptr1->prox->nome, temp2);
+                ptr1->prox->PR = temp1;
+                troca = true;
             }
 
-            if(!troca)
-                break;
-            
+            ptr1 = ptr1->prox;
         }
-
+        lptr = ptr1;
     }
-    
+    while(troca);
 }
 
 /* -------------------------------- */
 
-bool checa_Ordenada() {
+void imprime_Fila(struct Fila* f) {
 
-    int i;
+    struct No* temp;
+    temp = f->frente;
+    int i = 0;
 
-    for(i = 0; i < total-1; i++) {
-
-        if(prontos[i].PR > prontos[i+1].PR)
-            return false;
+    while(temp != NULL) {
+        printf("Posicao %d ->>> Nome: %s   Prioridade: %ld\n", i, temp->nome, temp->PR);
+        temp = temp->prox;
+        i++;
     }
 
-    return true;
-}
-
-/* -------------------------------- */
-void imprime_Fila() {
-
-    int i;
-
-    for(i = 0; i < total; i++) {
-        printf("Posicao %d da fila. Nome: %s   PR: %ld\n", i, prontos[i].nome, prontos[i].PR);
-    }
 }
