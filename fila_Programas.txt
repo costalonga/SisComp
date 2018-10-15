@@ -1,11 +1,11 @@
 Run P1
 Run P3 PR=5
-Run P4 I=10 D=20
+Run P4 I=0 D=10
 Run p5
-Run p6 i=10 d=30
+Run p6 i=P4 d=20
 Run P7
-Run P8 i=17 d=40
-Run P9 i=P4 d=50
+Run P8 i=17 d=20
+Run P9 i=40 d=5
 Run P2
 Run P4
 Run PA PR=2

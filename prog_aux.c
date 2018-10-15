@@ -72,7 +72,10 @@ carac_progs analisa_RealTime(struct carac_progs v[], char buf[], int tipo, int c
     i = i +3;
 
     while(buf[i] != '\0') {
-        // Caso mude o tamanho do vetor, ajeitar aqui pra não dar erro na struct.
+        if(a == 2) {
+            break;
+        }
+
         dur_Char[a] = buf[i];
         a++;
         i++;
@@ -106,7 +109,7 @@ void ini_Vetor(bool vec[60], struct carac_progs v[]) {
 void acessa_vec_Struct(struct carac_progs v[], char s[], intmax_t* ini, int cont) {
 
     int i;
-
+    
     for(i = 0; i < cont; i++) {
         if(strcmp(v[i].nome,s) == 0) {
             *ini = v[i].inicio + v[i].duracao; 
@@ -125,7 +128,7 @@ void salva_no_Vetor(carac_progs st, struct carac_progs v[], int cont) {
             printf("Vetor cheio. \n");
             return;
         }
-            
+        
         strcpy(v[cont].nome, st.nome);
         v[cont].inicio = st.inicio;
         v[cont].duracao = st.duracao;
@@ -210,8 +213,10 @@ pFila pFila_RR(char buf[]) {
 bool verificaRT_vetorSegundos(bool v[], intmax_t ini, intmax_t fim) {
 
     intmax_t i;
-    ini--;
-    fim--;
+    if(ini != 0) {
+        ini--;
+    }
+
 
     if(v[ini] == true) {
         printf("Ja existe algum processo rodando nesse tempo.\n");
@@ -225,12 +230,13 @@ bool verificaRT_vetorSegundos(bool v[], intmax_t ini, intmax_t fim) {
                 return false;
             }
         }
+    }
 
     for(i = ini; i < fim; i++) {
         v[i] = true;
     }
         return true;
-    }
+    
 }
 
 /* ------------------- ------------------- */

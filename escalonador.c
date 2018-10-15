@@ -176,11 +176,11 @@ int main() {
                         verifica_vecRT(n, st, cont, prog_RodandoRT);  
 
                         // Verifica se o programa pode rodar no tempo desejado.  
-                        permissao = verificaRT_vetorSegundos(vec_Segundos, st.inicio, st.duracao);
-
+                        permissao = verificaRT_vetorSegundos(vec_Segundos, st.inicio, st.duracao+st.inicio);
+                        
                         // Se puder..
                         if(permissao == true) {
-                            printf("Programa sendo executado: %s   De: %ld ate %ld.\n", st.nome, st.inicio, st.duracao);
+                        printf("Programa sendo executado: %s   De: %ld ate %ld.\n", st.nome, st.inicio, st.duracao + st.inicio);
 
                             // Executa prog.
                             // Insere na lista dos progs rodando.
@@ -212,6 +212,8 @@ int main() {
             }
         
               imprime_Fila(f); 
+              
+              //imprime(prog_RodandoRT, cont);
     }
 }
 
