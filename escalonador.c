@@ -17,7 +17,8 @@
    set detach-on-fork off
 */
 
-
+//
+int fd[2];
 
 // Usada para terminar o programa quando o .txt for completamente lido.
 void handler(int sinal);
@@ -39,7 +40,6 @@ int main() {
 
     // Variáveis relacionadas ao pipe.
     ssize_t d_TR, d_RE;
-    int fd[2];
 
     // Variável que vai armazenar o tipo de processo.
     int tipo;
@@ -162,10 +162,12 @@ int main() {
         // Retorna o tipo do processo.
         tipo = analisa_buffer(buffer);
 
+        // Estrutura que armazena informaçoes para o fila de prontos
         struct No* n;
         
             switch(tipo) {
                 case 1:
+                    // Obtem inicio e duração do RT.
                     st = analisa_RealTime(prog_RodandoRT, buffer, tipo, cont);
 
                     // Salva no vetor de RT  
@@ -178,14 +180,20 @@ int main() {
                     // Coloca na fila de prontos
                     insere_FilaProntos(f, p.nome, p.PR);
 
-                    // Ordena a fila            
+                    // Ordena a fila de acordo com as prioridades.           
                     ordena_Prioridades(f);          
 
                     // Remove o primeiro elemento (maior prioridade)                
                     n = remove_FilaProntos(f);                      
 
+                    // Verifica a fila de espera para ver se tem algum programa para ser executado.
+                    // Se tiver, executa e segue o programa
+
+                    // Se nao tiver, segue o programa
+
                     // Se for RT
                     if(n->PR == -1) {
+
                         // Verifica tempo de inicio e duracao no vetor dos RT.
                         verifica_vecRT(n, st, cont, prog_RodandoRT);  
 
@@ -194,14 +202,13 @@ int main() {
                         
                         // Se puder..
                         if(permissao == true) {
-                        printf("Programa que sera executado: %s   De: %ld ate %ld.\n", st.nome, st.inicio, st.duracao + st.inicio);
 
                             // Verifica se pode rodar no min. atual. 
                             permissao = verifica_minAtual(tempoAtual, st.inicio);
 
                             // Se sim, executa. 
                             if(permissao == true) {
-                                printf("Vou executar.\n");
+                                printf("Programa que sera executado: %s   De: %ld s ate %ld s.\n", st.nome, st.inicio, st.duracao + st.inicio);
 
                                 // Executa
                                 // Adiciona na lista de executando
@@ -209,7 +216,7 @@ int main() {
 
                             // Senao, entra na lista de espera
                             else {
-                                printf("Lista de espera.\n");
+                                printf("Lista de espera, vou executar no proximo minuto.\n");
 
                                 // Adiciona na lista de espera
                             }
@@ -224,11 +231,15 @@ int main() {
 
                     // Se for RR
                      else if(n->PR == 8) {
+                         // Procura um "buraco" para executar o RR
+
+                         // Se houver, executa e coloca na lista de terminados
 
                      }
 
                     // Se for PR
                      else {
+                         // Caclcula o tempo que o processo sera executado
 
                      }
                     break;
@@ -245,19 +256,16 @@ int main() {
                     break;
             }
         
-              //imprime_Fila(f); 
-              //gettimeofday(&t2, NULL);
-              //percorrido = (t2.tv_sec - t1.tv_sec);
-              //printf("Tempo percorrido: %f\n", percorrido);
-              //imprime(prog_RodandoRT, cont);
+              //imprime_seg(vec_Segundos);
     }
 }
 
 
 
 void handler(int sinal) {
-    printf("O arquivo terminou. Fechando o programa.\n");
-    exit(1);
+    printf("O arquivo terminou. Fechando o canal de comunicacao.\n");
+    close(fd[1]);
+    sleep(10);
 }
 
 void imprime(struct carac_progs v[], int cont){

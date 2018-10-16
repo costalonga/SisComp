@@ -109,15 +109,18 @@ void ini_Vetor(bool vec[60], struct carac_progs v[]) {
 void acessa_vec_Struct(struct carac_progs v[], char s[], intmax_t* ini, int cont) {
 
     int i;
+
+    if(cont == 0) {
+        printf("O vetor estava vazio.\n");
+    }
     
     for(i = 0; i < cont; i++) {
         if(strcmp(v[i].nome,s) == 0) {
-            *ini = v[i].inicio + v[i].duracao; 
+            *ini = v[i].inicio + v[i].duracao + 1; 
             return;
         }
     }
-
-    printf("O vetor estava vazio.\n");
+    
 }
 
 /* ------------------- ------------------- */
@@ -219,7 +222,7 @@ bool verificaRT_vetorSegundos(bool v[], intmax_t ini, intmax_t fim) {
 
 
     if(v[ini] == true) {
-        printf("Ja existe algum processo rodando nesse tempo.\n");
+        printf("Ja existe algum processo rodando no tempo solicitado, descartando processo.\n");
         return false;
     }
 
@@ -231,7 +234,7 @@ bool verificaRT_vetorSegundos(bool v[], intmax_t ini, intmax_t fim) {
     else {
         for(i = ini; i < fim; i++) {
             if(v[i] == true) {
-                printf("Ja existe algum processo rodando nesse tempo.\n");
+                printf("Ja existe algum processo rodando no tempo solicitado, descartando processo.\n");
                 return false;
             }
         }
@@ -240,7 +243,6 @@ bool verificaRT_vetorSegundos(bool v[], intmax_t ini, intmax_t fim) {
     for(i = ini; i < fim; i++) {
         v[i] = true;
     }
-        v[i-1] = false;
         return true;
     
 }

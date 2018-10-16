@@ -1,9 +1,9 @@
 Run P1
 Run P3 PR=5
-Run P4 I=0 D=1
-Run p5
-Run p6
-Run P7
+Run P4 I=0 D=10
+Run p5 i=P4 d=10
+Run p6 i=p5 d=5
+Run P7 i=p6 d=6
 Run P8
 Run P9
 Run PX
