@@ -1,0 +1,50 @@
+PUC-Rio - Trabalho 1 de SisTemas de Computação(INF1019) 
+Professor: Markus Endler
+Monitor: Fernando
+Alunos: Guilherme Lacerda - 1421134
+        Marcelo Costalonga - 1421229
+        
+    ➤ Modo de Executar o projeto:
+        
+        ...
+        
+    ➤ Programas executados e casos de teste:
+    
+        ...
+        
+    ➤ Comentários:
+    ➤ Descrição dos Programas CPU-bound e IO-bound
+    Todos os programas do tipo CPU-bound tem a mesma funcionalidade, que é calcular parte da sequência de Fibonacci e imprimir seus valores entre longos intervalos. Enquanto, os programas do tipo IO-bound calculam as potências dos números a partir de 2 em diante, até causar overflow, diferente do CPU-bound, seus valores são impressos a cada instante.
+    Analisamos o uso %CPU utilizando o comando $ps u, para verificarmos a diferença entre os dois processos. Segue abaixo os valores observados:
+    
+    ➤Processo CPU-bound rodando sozinho: %CPU usado 89.6 
+
+costalonga@Celo-VirtualBox:~/Documents$ ps u 
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+costalo+  7046 89.6  0.2  11420  7808 pts/0    R+   21:14   1:07 ./CPUboundProcess
+costalo+  7064  0.0  0.1  46772  3592 pts/1    R+   21:15   0:00 ps u
+
+
+    ➤Processo IO-bound rodando sozinho: %CPU usado 0.2
+    
+costalonga@Celo-VirtualBox:~/Documents$ ps u 
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+costalo+  7069  0.2  0.0   4508   724 pts/2    S+   21:17   0:00 ./IOboundProcess
+costalo+  7071  0.0  0.1  46772  3660 pts/1    R+   21:17   0:00 ps u
+
+
+    ➤Processo IO-bound e CPU-bound rodando simultaneamente: 
+    %CPU usado pelo IO-bound: 0.3
+    %CPU usado pelo CPU-bound: 43.5
+
+costalonga@Celo-VirtualBox:~/Documents$ ps u 
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+costalo+  7166  0.3  0.0   4508   744 pts/2    S+   21:22   0:00 ./IOboundProcess
+costalo+  7167 43.5  0.2  11288  7804 pts/0    R+   21:22   0:02 ./CPUboundProcess
+costalo+  7169  0.0  0.1  46772  3688 pts/1    R+   21:22   0:00 ps u
+             
+      
+
+
+
+
