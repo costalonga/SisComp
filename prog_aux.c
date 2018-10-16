@@ -223,6 +223,11 @@ bool verificaRT_vetorSegundos(bool v[], intmax_t ini, intmax_t fim) {
         return false;
     }
 
+    else if(fim > 60) {
+        printf("Limite de tempo excedido pelo programa.\n");
+        return false;
+    }
+
     else {
         for(i = ini; i < fim; i++) {
             if(v[i] == true) {
@@ -235,6 +240,7 @@ bool verificaRT_vetorSegundos(bool v[], intmax_t ini, intmax_t fim) {
     for(i = ini; i < fim; i++) {
         v[i] = true;
     }
+        v[i-1] = false;
         return true;
     
 }
@@ -256,4 +262,17 @@ void verifica_vecRT(struct No* n, carac_progs c, int cont, carac_progs v[]) {
 
     printf("Struct correspondente nao encontrada no vetor de RT.\n");
     return;
+}
+
+
+
+bool verifica_minAtual(double t, intmax_t ini) {
+
+    if(t > ini) {
+        return false;
+    }
+
+    else {
+        return true;
+    }
 }

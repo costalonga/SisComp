@@ -59,5 +59,8 @@ bool verificaRT_vetorSegundos(bool v[], intmax_t ini, intmax_t fim);
 // Verifica o inico e duracao do RT no vetor que contem os RT.
 void verifica_vecRT(struct No* n, carac_progs c, int cont, carac_progs v[]);
 
+//
+bool verifica_minAtual(double t, intmax_t ini);
+
 
 #endif //PROG_PRINCIPAIS_PROG_AUX_H

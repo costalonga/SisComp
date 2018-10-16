@@ -3,18 +3,14 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/time.h>
+#include <time.h>
 #include <stdbool.h>
 #include "prog_aux.h"
 #include "fila.h"
 #define BUF_SIZE 17
 #define TAM_NOME 3
 #define MAX_PROGS 60
-
-/*
- TODO: Condição de termino do programa (nao qnd txt for lido)
-*/
-
-
 
 /*
    set follow-fork-mode child
@@ -36,6 +32,10 @@ void imprime_seg(bool v[]);
 int main() {
 
     /* ---------------------- VARIAVEIS ESCALONADOR ---------------------- */
+
+    // Variáveis que serão usadas para calcular o minuto.
+    time_t start = time(NULL);
+    double tempoAtual;
 
     // Variáveis relacionadas ao pipe.
     ssize_t d_TR, d_RE;
@@ -119,11 +119,13 @@ int main() {
         }
 
         // Avisa o escalonador que o arquivo terminou.
+        
         fim = kill(0, SIGUSR1);
         fclose(arq);
         if(fim == -1) {
             printf("Erro ao enviar o sinal.\n");
         }
+        
 
     }
     // Fim do interpretador.
@@ -141,8 +143,20 @@ int main() {
     // Fila dos processos PRONTOS para executar.
     struct Fila* f = cria_Fila();
 
+
+
     // while deve terminar quando nou houver mais processos executanto - arrumar depois.
-    while(d_RE != -1) {
+    while(1) {
+
+        // Atualiza o contador do tempo.
+        tempoAtual = (double)time(NULL) - start;
+        
+        // Reinicia o minuto.
+        if(tempoAtual > 60) {
+            start = time(NULL);
+        }
+
+        // Le a pipe.
         d_RE = read(fd[0], buffer , sizeof(buffer));
 
         // Retorna o tipo do processo.
@@ -180,15 +194,35 @@ int main() {
                         
                         // Se puder..
                         if(permissao == true) {
-                        printf("Programa sendo executado: %s   De: %ld ate %ld.\n", st.nome, st.inicio, st.duracao + st.inicio);
+                        printf("Programa que sera executado: %s   De: %ld ate %ld.\n", st.nome, st.inicio, st.duracao + st.inicio);
 
-                            // Executa prog.
-                            // Insere na lista dos progs rodando.
+                            // Verifica se pode rodar no min. atual. 
+                            permissao = verifica_minAtual(tempoAtual, st.inicio);
+
+                            // Se sim, executa. 
+                            if(permissao == true) {
+                                printf("Vou executar.\n");
+
+                                // Executa
+                                // Adiciona na lista de executando
+                            }
+
+                            // Senao, entra na lista de espera
+                            else {
+                                printf("Lista de espera.\n");
+
+                                // Adiciona na lista de espera
+                            }
+                        
+                        }
+
+                        else {
+                            // Adiciona a lista de bloqueados. (não podem executar). 
                         }
 
                     }
 
-                    // Se for de RR
+                    // Se for RR
                      else if(n->PR == 8) {
 
                      }
@@ -211,8 +245,10 @@ int main() {
                     break;
             }
         
-              imprime_Fila(f); 
-              
+              //imprime_Fila(f); 
+              //gettimeofday(&t2, NULL);
+              //percorrido = (t2.tv_sec - t1.tv_sec);
+              //printf("Tempo percorrido: %f\n", percorrido);
               //imprime(prog_RodandoRT, cont);
     }
 }
