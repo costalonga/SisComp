@@ -30,6 +30,17 @@ void imprime(struct carac_progs v[], int cont);
 void imprime_seg(bool v[]);
 
 
+//TODO
+char* concat(const char *s1, const char *s2)
+{
+    char *result = malloc(strlen(s1) + strlen(s2) + 1); // +1 for the null-terminator
+    // in real code you would check for errors in malloc here
+    strcpy(result, s1);
+    strcat(result, s2);
+    return result;
+}
+
+
 int main() {
 
     /* ---------------------- VARIAVEIS ESCALONADOR ---------------------- */
@@ -145,7 +156,7 @@ int main() {
 
 
     //TODO
-    char *args[] = {"Pn" , NULL};
+    char *args[] = {"./Pn" , NULL};
     int novo_pid;
     
     // while deve terminar quando nou houver mais processos executanto - arrumar depois.
@@ -206,8 +217,8 @@ int main() {
                                 //Se for filho executa processo
                                 novo_pid = fork();
                                 if (novo_pid == 0) {
-                                    args[0] = strcat("./",st.nome);  
-                                    printf("Vou executar.\n");  
+                                    args[0] = concat("./",st.nome);  
+                                    printf("Vou executar.\n");
                                     execvp(args[0],args); //executa alguem TODO
                                 }
                                 
@@ -229,7 +240,7 @@ int main() {
                     
                     novo_pid = fork();                    
                     if (novo_pid == 0) {
-                        args[0] = strcat("./",st.nome);    
+                        args[0] = concat("./",st.nome);    
                         execvp(args[0],args); //executa alguem TODO
                     }
                     
@@ -245,7 +256,7 @@ int main() {
                     
                     novo_pid = fork();                    
                     if (novo_pid == 0) {
-                        args[0] = strcat("./",st.nome);    
+                        args[0] = concat("./",st.nome);    
                         execvp(args[0],args); //executa alguem TODO
                     }
                     
