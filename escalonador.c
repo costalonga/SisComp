@@ -206,7 +206,8 @@ int main() {
                                 //Se for filho executa processo
                                 novo_pid = fork();
                                 if (novo_pid == 0) {
-                                    args[0] = strcat("./",st.nome);    
+                                    args[0] = strcat("./",st.nome);  
+                                    printf("Vou executar.\n");  
                                     execvp(args[0],args); //executa alguem TODO
                                 }
                                 
@@ -265,6 +266,7 @@ void handler(int sinal) {
     printf("O arquivo terminou. Fechando o canal de comunicacao.\n");
     close(fd[1]);
     sleep(10);
+    exit(1);
 }
 
 void imprime(struct carac_progs v[], int cont){
