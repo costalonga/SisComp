@@ -144,7 +144,10 @@ int main() {
     struct Fila* f = cria_Fila();
 
 
-
+    //TODO
+    char *args[] = {"Pn" , NULL};
+    int novo_pid;
+    
     // while deve terminar quando nou houver mais processos executanto - arrumar depois.
     while(1) {
 
@@ -201,8 +204,9 @@ int main() {
                         if(permissao == true) {
                                 printf("Programa que sera executado: %s   De: %ld s ate %ld s.\n", st.nome, st.inicio, st.duracao + st.inicio);
                                 //Se for filho executa processo
-                                int novo_pid = fork();
+                                novo_pid = fork();
                                 if (novo_pid == 0) {
+                                    args[0] = strcat("./",st.nome);    
                                     execvp(args[0],args); //executa alguem TODO
                                 }
                                 
@@ -222,8 +226,9 @@ int main() {
                     insere_FilaProntos(f, p.nome, p.PR);
                     ordena_Prioridades(f);
                     
-                    int novo_pid = fork();                    
+                    novo_pid = fork();                    
                     if (novo_pid == 0) {
+                        args[0] = strcat("./",st.nome);    
                         execvp(args[0],args); //executa alguem TODO
                     }
                     
@@ -237,8 +242,9 @@ int main() {
                     p = pFila_RR(buffer);
                     insere_FilaProntos(f, p.nome, p.PR);
                     
-                    int novo_pid = fork();                    
+                    novo_pid = fork();                    
                     if (novo_pid == 0) {
+                        args[0] = strcat("./",st.nome);    
                         execvp(args[0],args); //executa alguem TODO
                     }
                     
