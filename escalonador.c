@@ -200,7 +200,15 @@ int main() {
                         // Se puder..
                         if(permissao == true) {
                                 printf("Programa que sera executado: %s   De: %ld s ate %ld s.\n", st.nome, st.inicio, st.duracao + st.inicio);
-                        
+                                //Se for filho executa processo
+                                int novo_pid = fork();
+                                if (novo_pid == 0) {
+                                    execvp(args[0],args); //executa alguem TODO
+                                }
+                                
+                                else {
+                                    //pai
+                                }
                         }
 
                         else {
@@ -213,11 +221,31 @@ int main() {
                     p = pFila_PR(buffer);
                     insere_FilaProntos(f, p.nome, p.PR);
                     ordena_Prioridades(f);
+                    
+                    int novo_pid = fork();                    
+                    if (novo_pid == 0) {
+                        execvp(args[0],args); //executa alguem TODO
+                    }
+                    
+                    else {
+                        //pai
+                    }
+                    
                     break;
 
                 case 3:
                     p = pFila_RR(buffer);
                     insere_FilaProntos(f, p.nome, p.PR);
+                    
+                    int novo_pid = fork();                    
+                    if (novo_pid == 0) {
+                        execvp(args[0],args); //executa alguem TODO
+                    }
+                    
+                    else {
+                        //pai
+                    }
+                    
                     break;
             }
         
