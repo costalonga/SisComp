@@ -1,5 +1,6 @@
 #include "prog_aux.h"
 #include "fila.h"
+#include "listas.h"
 
 // Chamada na main
 int analisa_buffer(char s[]) {
@@ -267,7 +268,6 @@ void verifica_vecRT(struct No* n, carac_progs c, int cont, carac_progs v[]) {
 }
 
 
-
 bool verifica_minAtual(double t, intmax_t ini) {
 
     if(t > ini) {
@@ -277,4 +277,18 @@ bool verifica_minAtual(double t, intmax_t ini) {
     else {
         return true;
     }
+}
+
+Processo preenche_proc(Processo* p, intmax_t ini, intmax_t _fim, char nome[]) {
+
+    p->ini = ini;
+    p->fim = _fim;
+    strcpy(p->nome, nome);
+    p->estado = executando;
+
+    return *p;
+}
+
+void troca_Contexto(double tAtual, Lista* pRodando, Lista* lEspera) {
+
 }

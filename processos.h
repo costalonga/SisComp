@@ -19,8 +19,7 @@ typedef enum tipoProc {
 } TipoProc;
 
 typedef struct Processo{
-    int arrival;
-    int duracao;
+    char nome[3];
     int ini;
     int fim;
 	Estado estado;

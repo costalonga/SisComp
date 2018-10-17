@@ -191,9 +191,6 @@ int main() {
 
                     // Se nao tiver, segue o programa
 
-                    // Se for RT
-                    if(n->PR == -1) {
-
                         // Verifica tempo de inicio e duracao no vetor dos RT.
                         verifica_vecRT(n, st, cont, prog_RodandoRT);  
 
@@ -202,24 +199,7 @@ int main() {
                         
                         // Se puder..
                         if(permissao == true) {
-
-                            // Verifica se pode rodar no min. atual. 
-                            permissao = verifica_minAtual(tempoAtual, st.inicio);
-
-                            // Se sim, executa. 
-                            if(permissao == true) {
                                 printf("Programa que sera executado: %s   De: %ld s ate %ld s.\n", st.nome, st.inicio, st.duracao + st.inicio);
-
-                                // Executa
-                                // Adiciona na lista de executando
-                            }
-
-                            // Senao, entra na lista de espera
-                            else {
-                                printf("Lista de espera, vou executar no proximo minuto.\n");
-
-                                // Adiciona na lista de espera
-                            }
                         
                         }
 
@@ -227,21 +207,6 @@ int main() {
                             // Adiciona a lista de bloqueados. (não podem executar). 
                         }
 
-                    }
-
-                    // Se for RR
-                     else if(n->PR == 8) {
-                         // Procura um "buraco" para executar o RR
-
-                         // Se houver, executa e coloca na lista de terminados
-
-                     }
-
-                    // Se for PR
-                     else {
-                         // Caclcula o tempo que o processo sera executado
-
-                     }
                     break;
 
                 case 2:

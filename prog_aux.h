@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include "fila.h"
+#include "listas.h"
 
 /* ---------- VARIAVEIS ---------- */
 
@@ -61,6 +62,12 @@ void verifica_vecRT(struct No* n, carac_progs c, int cont, carac_progs v[]);
 
 // Verifica se o processo pode rodar no minuto atual
 bool verifica_minAtual(double t, intmax_t ini);
+
+//
+Processo preenche_proc(Processo* p, intmax_t ini, intmax_t _fim, char nome[]);
+
+// Recebe o programa atual rodando, verifica se deve - ou não - continuar rodando. E seleciona o próximo processo caso precise.
+void troca_Contexto(double tAtual, Lista* pRodando, Lista* lEspera);
 
 
 #endif //PROG_PRINCIPAIS_PROG_AUX_H
