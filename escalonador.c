@@ -20,18 +20,27 @@
 #define nome_prog_dep 9027
 #define trigger 9028
 
-
-/* Variaveis globais */
-
-bool executando = false;
-
-/* ***************** */
+#define NUM_ELEMENTOS 10
 
 
 
 /* Funcoes */
 
 void executaRT(Fila* fila, unsigned int tempo);
+bool checa_Criado(char* nome, char** vec);
+char** aloca_Vec();
+void imprime_vec(char** vec);
+void insere_Processo(char** vec, char* nome);
+
+/* ***************** */
+
+
+/* Variaveis globais */
+
+int CORRENTE;
+bool executando = false;
+pid_t pidAtual;
+char** processosRT;
 
 /* ***************** */
 
@@ -44,7 +53,8 @@ int main() {
     unsigned int tAtual;
     char* const argv[] = {NULL};
 
-    int var = -1;
+    processosRT = aloca_Vec();
+    CORRENTE = 0;
 
     
    // Fila* filaRR = cria_Fila();
@@ -165,7 +175,7 @@ int main() {
 
                 /* Caso nao dependa de nenhum programa */
                 else {
-                    printf("Tipo: %d (RT)  Nome: %s   Inicio: %d   Duracao: %d\n", *tipo, nome, *inicioRT, *duracaoRT);
+                    //printf("Tipo: %d (RT)  Nome: %s   Inicio: %d   Duracao: %d\n", *tipo, nome, *inicioRT, *duracaoRT);
                     insere(filaRT, nome, *tipo, -1, *inicioRT, *duracaoRT);      
                     filaRT_aux = filaRT;  
                 }
@@ -212,6 +222,7 @@ void executaRT(Fila* fila, unsigned int tempo) {
     Prog* aux = fila->frente;
     char* const argv[] = {NULL};
     pid_t pid;
+    bool verifica_Executado = false;
 
 
     if(executando == false) {
@@ -224,26 +235,90 @@ void executaRT(Fila* fila, unsigned int tempo) {
             }
         }
 
+        verifica_Executado = checa_Criado(aux->nome, processosRT);
+        insere_Processo(processosRT, aux->nome);
+
         if((pid = fork()) == 0) {
-                execv(aux->nome, argv);
+                
+                if(verifica_Executado == true) {
+                    kill(aux->pid, SIGCONT);
+                    return;
+                }
+
+                else {
+                    execv(aux->nome, argv);   
+                }
+                
             }
 
             else {
                 executando = true;
-                printf("ID do processo criado: %d\n", pid);
+                printf("ID do processo criado aos %d segundos: %d\n", tempo, pid);
                 aux->pid = pid;
+                pidAtual = pid;
             }
     }
 
     else {
+        aux = acha_Prog_corrente(fila, pidAtual);
         if(tempo == (aux->duracao+aux->inicio)) {
             kill(aux->pid, SIGSTOP);
-            printf("Processo de ID %d parado.\n", aux->pid);
-            //remove_primeiro(fila);
+            printf("Processo de ID %d parado aos %d segundos.\n", aux->pid, tempo);
             executando = false;
         }
 
-        return;
     }
 
+}
+
+bool checa_Criado(char* nome, char** vec) {
+
+    int i = 0;
+
+    for(i = 0; i < CORRENTE; i++) {
+        if(strcmp(nome, vec[i]) == 0) {
+            
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+char** aloca_Vec() {
+
+    char** vec;
+    vec = (char**)malloc(sizeof(char)*NUM_ELEMENTOS);
+
+    int i;
+    for(i = 0; i < NUM_ELEMENTOS; i++) {
+        vec[i] = (char*)malloc(sizeof(char)*5);
+    }
+
+    return vec;
+}
+
+
+void imprime_vec(char** vec) {
+    int i;
+
+    for(i = 0; i < CORRENTE; i++) {
+        printf("Processo %s na posicao %d.\n", vec[i], i);
+    }
+}
+
+
+void insere_Processo(char** vec, char* nome) {
+
+    int i;
+
+    for(i = 0; i < CORRENTE; i++) {
+        if(strcmp(nome, vec[i]) == 0) {
+            return;
+        }
+    }
+
+    vec[CORRENTE] = strdup(nome);
+    CORRENTE++;
 }
