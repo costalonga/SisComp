@@ -243,13 +243,14 @@ void executaRT(Fila* fila, unsigned int tempo) {
             if(retomada == false) {
                     printf("Retomando o processo de ID %d\n", aux->pid);
                     kill(aux->pid, SIGCONT);
+                    executando = true;
                     retomada = true;
                     return;
                 }
             }
 
-        if((pid = fork()) == 0) {
 
+        if((pid = fork()) == 0) {
                 execv(aux->nome, argv);
             }
 
