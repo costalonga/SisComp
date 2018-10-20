@@ -35,7 +35,8 @@ void insere(Fila* fila, char* nome, int tipo, int prioridade, int inicio_RT, int
 /* Imprime a lista */
 void imprime(Fila* fila);
 
-
+/**/
+void remove_primeiro(Fila* fila);
 
 
 #endif //ESTRUTURA_H

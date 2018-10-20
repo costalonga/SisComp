@@ -50,6 +50,7 @@ int main() {
    // Fila* filaRR = cria_Fila();
     //Fila* filaPR = cria_Fila();
     Fila* filaRT = cria_Fila();
+    Fila* filaRT_aux = cria_Fila();
 
 
     /* Atachando a memoria */
@@ -138,9 +139,8 @@ int main() {
 
         tAtual = ((unsigned int)time(NULL) - tInicio) % 60;
 
-        if(tAtual > var) {
-            printf("\t\tTempo atual: %d", tAtual);
-            var++;
+        if(tAtual > 60) {
+            tAtual = 0;
         }
         
         if(*n_linha == 1) {
@@ -166,7 +166,8 @@ int main() {
                 /* Caso nao dependa de nenhum programa */
                 else {
                     printf("Tipo: %d (RT)  Nome: %s   Inicio: %d   Duracao: %d\n", *tipo, nome, *inicioRT, *duracaoRT);
-                    insere(filaRT, nome, *tipo, -1, *inicioRT, *duracaoRT);        
+                    insere(filaRT, nome, *tipo, -1, *inicioRT, *duracaoRT);      
+                    filaRT_aux = filaRT;  
                 }
             }
             
@@ -212,24 +213,37 @@ void executaRT(Fila* fila, unsigned int tempo) {
     char* const argv[] = {NULL};
     pid_t pid;
 
-    if(executando == false) {
-        if(tempo == aux->inicio) {
 
-            if((pid = fork()) == 0) {
+    if(executando == false) {
+    
+        while(tempo != aux->inicio) {
+            aux = aux->proximo;
+
+            if(aux->proximo == NULL) {
+                return;
+            }
+        }
+
+        if((pid = fork()) == 0) {
                 execv(aux->nome, argv);
             }
 
             else {
                 executando = true;
+                printf("ID do processo criado: %d\n", pid);
+                aux->pid = pid;
             }
-            
-        }
     }
 
     else {
-        if(tempo == aux->duracao+aux->inicio) {
-            kill(pid, SIGSTOP);
-            printf("Processo de ID %d parado.\n", pid);
+        if(tempo == (aux->duracao+aux->inicio)) {
+            kill(aux->pid, SIGSTOP);
+            printf("Processo de ID %d parado.\n", aux->pid);
+            //remove_primeiro(fila);
+            executando = false;
         }
+
+        return;
     }
+
 }

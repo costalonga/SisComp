@@ -48,6 +48,12 @@ void imprime(Fila* fila) {
 }
 
 
+void remove_primeiro(Fila* fila) {
+
+    fila->frente = fila->frente->proximo;
+    free(fila->frente);
+}
+
 
 
 
