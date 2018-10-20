@@ -67,7 +67,8 @@ int Key_Index(Fila* fila, Prog* process) {
     }
     
     while (aux != NULL) {
-        if (strcmp(process->nome, aux->nome) {
+        // verifica se strings tem mesmo nome
+        if (strcmp(process->nome, aux->nome) == 0) {
             return i;
         }
         aux = aux->proximo;
