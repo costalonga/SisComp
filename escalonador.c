@@ -41,6 +41,7 @@ int CORRENTE;
 bool executando = false;
 pid_t pidAtual;
 char** processosRT;
+bool retomada = false;
 
 /* ***************** */
 
@@ -238,25 +239,27 @@ void executaRT(Fila* fila, unsigned int tempo) {
         verifica_Executado = checa_Criado(aux->nome, processosRT);
         insere_Processo(processosRT, aux->nome);
 
-        if((pid = fork()) == 0) {
-                
-                if(verifica_Executado == true) {
+        if(verifica_Executado == true) {
+            if(retomada == false) {
+                    printf("Retomando o processo de ID %d\n", aux->pid);
                     kill(aux->pid, SIGCONT);
+                    retomada = true;
                     return;
                 }
-
-                else {
-                    execv(aux->nome, argv);   
-                }
-                
             }
 
-            else {
-                executando = true;
-                printf("ID do processo criado aos %d segundos: %d\n", tempo, pid);
-                aux->pid = pid;
-                pidAtual = pid;
+        if((pid = fork()) == 0) {
+
+                execv(aux->nome, argv);
             }
+
+        else {
+            retomada = false;
+            executando = true;
+            printf("ID do processo criado aos %d segundos: %d\n", tempo, pid);
+            aux->pid = pid;
+            pidAtual = pid;
+        }
     }
 
     else {
