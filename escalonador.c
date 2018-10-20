@@ -6,6 +6,8 @@
 #include <sys/ipc.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <signal.h>
+#include <stdbool.h>
 #include "estrutura.h"
 
 #define nova_linha 9020
@@ -21,7 +23,7 @@
 
 /* Variaveis globais */
 
-
+bool executando = false;
 
 /* ***************** */
 
@@ -29,7 +31,7 @@
 
 /* Funcoes */
 
-
+void executaRT(Fila* fila, unsigned int tempo);
 
 /* ***************** */
 
@@ -40,6 +42,9 @@ int main() {
     int mem_n_linha, mem_f_arq, mem_tipo, mem_nome, mem_prioridade, mem_inicio, mem_duracao, mem_nome_prog_dep, mem_trig;
     time_t tInicio = time(NULL);
     unsigned int tAtual;
+    char* const argv[] = {NULL};
+
+    int var = -1;
 
     
    // Fila* filaRR = cria_Fila();
@@ -127,12 +132,17 @@ int main() {
     while(1) {
         
         /* Condicao de parada. Nenhuma linha nova no arquivo e nenhum programa para executar */
-        if(*f_arq == 1) {
+        if(*f_arq == 1 && filaRT == NULL) {
             break;
         }
 
         tAtual = ((unsigned int)time(NULL) - tInicio) % 60;
 
+        if(tAtual > var) {
+            printf("\t\tTempo atual: %d", tAtual);
+            var++;
+        }
+        
         if(*n_linha == 1) {
             
             if(*tipo == 1) {
@@ -156,15 +166,14 @@ int main() {
                 /* Caso nao dependa de nenhum programa */
                 else {
                     printf("Tipo: %d (RT)  Nome: %s   Inicio: %d   Duracao: %d\n", *tipo, nome, *inicioRT, *duracaoRT);
-                    insere(filaRT, nome, *tipo, -1, *inicioRT, *duracaoRT);  
-                           
+                    insere(filaRT, nome, *tipo, -1, *inicioRT, *duracaoRT);        
                 }
             }
             
             *n_linha = 0; 
         }
         
-
+        executaRT(filaRT, tAtual); 
     }
     
     imprime(filaRT); 
@@ -195,4 +204,32 @@ int main() {
     
 
     return 0;
+}
+
+void executaRT(Fila* fila, unsigned int tempo) {
+
+    Prog* aux = fila->frente;
+    char* const argv[] = {NULL};
+    pid_t pid;
+
+    if(executando == false) {
+        if(tempo == aux->inicio) {
+
+            if((pid = fork()) == 0) {
+                execv(aux->nome, argv);
+            }
+
+            else {
+                executando = true;
+            }
+            
+        }
+    }
+
+    else {
+        if(tempo == aux->duracao+aux->inicio) {
+            kill(pid, SIGSTOP);
+            printf("Processo de ID %d parado.\n", pid);
+        }
+    }
 }
