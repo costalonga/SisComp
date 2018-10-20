@@ -37,11 +37,11 @@ void insere_Processo(char** vec, char* nome);
 
 /* Variaveis globais */
 
-int CORRENTE;
-bool executando = false;
-pid_t pidAtual;
-char** processosRT;
-bool retomada = false;
+int CORRENTE;                   /* Variavel que guarda a qtd de elementos no vetor de RT */
+bool executandoRT = false;      /* Variavel que indica se ha (true) ou nao (false) um RT sendo executado */
+pid_t pidAtual;                 /* Variavel que guarda o pid do RT sendo executado */
+char** processosRT;             /* Vetor que mantem registro dos RT ja executados */
+bool retomada = false;          /* Variavel auxiliar que indica quando um processo foi retomado (true) ou nao (false) */
 
 /* ***************** */
 
@@ -57,11 +57,7 @@ int main() {
     processosRT = aloca_Vec();
     CORRENTE = 0;
 
-    
-   // Fila* filaRR = cria_Fila();
-    //Fila* filaPR = cria_Fila();
     Fila* filaRT = cria_Fila();
-    Fila* filaRT_aux = cria_Fila();
 
 
     /* Atachando a memoria */
@@ -153,6 +149,22 @@ int main() {
         if(tAtual > 60) {
             tAtual = 0;
         }
+
+        /*
+            executaRT();
+
+            if(executandoRTRT == false) {
+                executaPR();  <- executandoRTPR = true;
+            else {
+                stopPR();
+            }
+
+                if(executandoRTPR == false) {
+                    executaRR();
+                }
+            }
+
+        */
         
         if(*n_linha == 1) {
             
@@ -176,7 +188,6 @@ int main() {
 
                 /* Caso nao dependa de nenhum programa */
                 else {
-                    //printf("Tipo: %d (RT)  Nome: %s   Inicio: %d   Duracao: %d\n", *tipo, nome, *inicioRT, *duracaoRT);
                     insere(filaRT, nome, *tipo, -1, *inicioRT, *duracaoRT);      
                     filaRT_aux = filaRT;  
                 }
@@ -218,6 +229,7 @@ int main() {
     return 0;
 }
 
+/* Funcao que trata do escalonamento dos processos RT */
 void executaRT(Fila* fila, unsigned int tempo) {
 
     Prog* aux = fila->frente;
@@ -226,7 +238,7 @@ void executaRT(Fila* fila, unsigned int tempo) {
     bool verifica_Executado = false;
 
 
-    if(executando == false) {
+    if(executandoRT == false) {
     
         while(tempo != aux->inicio) {
             aux = aux->proximo;
@@ -240,14 +252,16 @@ void executaRT(Fila* fila, unsigned int tempo) {
         insere_Processo(processosRT, aux->nome);
 
         if(verifica_Executado == true) {
+
             if(retomada == false) {
                     printf("Retomando o processo de ID %d\n", aux->pid);
                     kill(aux->pid, SIGCONT);
-                    executando = true;
+                    executandoRT = true;
+                    pidAtual = aux->pid;
                     retomada = true;
                     return;
                 }
-            }
+        }
 
 
         if((pid = fork()) == 0) {
@@ -256,7 +270,7 @@ void executaRT(Fila* fila, unsigned int tempo) {
 
         else {
             retomada = false;
-            executando = true;
+            executandoRT = true;
             printf("ID do processo criado aos %d segundos: %d\n", tempo, pid);
             aux->pid = pid;
             pidAtual = pid;
@@ -268,13 +282,15 @@ void executaRT(Fila* fila, unsigned int tempo) {
         if(tempo == (aux->duracao+aux->inicio)) {
             kill(aux->pid, SIGSTOP);
             printf("Processo de ID %d parado aos %d segundos.\n", aux->pid, tempo);
-            executando = false;
+            executandoRT = false;
+            retomada = false;
         }
 
     }
 
 }
 
+/* Funcao que verifica se o processo ja foi criado e executado previamente. Utilizada a partir do segundo minuto. */
 bool checa_Criado(char* nome, char** vec) {
 
     int i = 0;
@@ -289,7 +305,7 @@ bool checa_Criado(char* nome, char** vec) {
     return false;
 }
 
-
+/* Funcao auxiliar que serve para alocar o vetor de RT */
 char** aloca_Vec() {
 
     char** vec;
@@ -303,7 +319,7 @@ char** aloca_Vec() {
     return vec;
 }
 
-
+/* Funcao auxiliar que imprime o vetor de RT (verificacao) */
 void imprime_vec(char** vec) {
     int i;
 
@@ -312,7 +328,7 @@ void imprime_vec(char** vec) {
     }
 }
 
-
+/* Funcao que insere um processo no vetor de RT para manter registro dos programas executados */
 void insere_Processo(char** vec, char* nome) {
 
     int i;
