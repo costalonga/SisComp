@@ -30,7 +30,7 @@ int main() {
 
     /* Criando e atachando a memoria */
 
-    mem_trig = shmget(trigger, sizeof(int), IPC_CREAT | S_IWUSR | S_IRUSR);
+    mem_trig = shmget(trigger, sizeof(int), IPC_CREAT | IPC_EXCL | S_IWUSR | S_IRUSR);
     if(mem_trig < 0) {
         perror("Erro ao criar a memoria para salvar Trig.\n");
         exit(1);
@@ -38,7 +38,7 @@ int main() {
     trig = (int*)shmat(mem_trig, 0, 0);
     
 
-    mem_n_linha = shmget(nova_linha, sizeof(int), IPC_CREAT | S_IWUSR | S_IRUSR);
+    mem_n_linha = shmget(nova_linha, sizeof(int), IPC_CREAT | IPC_EXCL | S_IWUSR | S_IRUSR);
     if(mem_n_linha < 0) {
         perror("Erro ao criar a memoria para salvar nLinha.\n");
         exit(1);
@@ -46,7 +46,7 @@ int main() {
     n_linha = (int*)shmat(mem_n_linha, 0, 0);
 
 
-    mem_f_arq = shmget(fim_arq, sizeof(int), IPC_CREAT | S_IWUSR | S_IRUSR);
+    mem_f_arq = shmget(fim_arq, sizeof(int), IPC_CREAT | IPC_EXCL | S_IWUSR | S_IRUSR);
     if(mem_f_arq < 0) {
         perror("Erro ao criar a memoria para salvar fArq.\n");
         exit(1);
@@ -54,7 +54,7 @@ int main() {
     f_arq = (int*)shmat(mem_f_arq, 0, 0);
 
 
-    mem_tipo = shmget(tipo_prog, sizeof(int), IPC_CREAT | S_IWUSR | S_IRUSR);
+    mem_tipo = shmget(tipo_prog, sizeof(int), IPC_CREAT | IPC_EXCL | S_IWUSR | S_IRUSR);
     if(mem_tipo < 0) {
         perror("Erro ao criar a memoria para salvar Tipo.\n");
         exit(1);
@@ -62,7 +62,7 @@ int main() {
     tipo = (int*)shmat(mem_tipo, 0, 0);
 
 
-    mem_nome = shmget(nome_prog, sizeof(char*)*3, IPC_CREAT | S_IWUSR | S_IRUSR);
+    mem_nome = shmget(nome_prog, sizeof(char*)*3, IPC_CREAT | IPC_EXCL | S_IWUSR | S_IRUSR);
     if(mem_nome < 0) {
         perror("Erro ao criar a memoria para salvar Nome.\n");
         exit(1);
@@ -70,7 +70,7 @@ int main() {
     nome = (char*)shmat(mem_nome, 0, 0);
     
 
-    mem_nome_prog_dep = shmget(nome_prog_dep, sizeof(char)*3, IPC_CREAT | S_IWUSR | S_IRUSR);
+    mem_nome_prog_dep = shmget(nome_prog_dep, sizeof(char)*3, IPC_CREAT | IPC_EXCL | S_IWUSR | S_IRUSR);
     if(mem_nome_prog_dep < 0) {
         perror("Erro ao criar a memoria para salvar NomeDep");
         exit(1);
@@ -78,7 +78,7 @@ int main() {
     prog_dep = (char*)shmat(mem_nome_prog_dep, 0, 0);
 
 
-    mem_prioridade = shmget(prioridade_prog, sizeof(int), IPC_CREAT | S_IWUSR | S_IRUSR);
+    mem_prioridade = shmget(prioridade_prog, sizeof(int), IPC_CREAT | IPC_EXCL | S_IWUSR | S_IRUSR);
     if(mem_prioridade < 0) {
         perror("Erro ao criar a memoria para salvar Prioridade.\n");
         exit(1);
@@ -86,7 +86,7 @@ int main() {
     prioridade = (int*)shmat(mem_prioridade, 0, 0);
 
 
-    mem_inicio = shmget(inicio, sizeof(int), IPC_CREAT | S_IWUSR | S_IRUSR);
+    mem_inicio = shmget(inicio, sizeof(int), IPC_CREAT | IPC_EXCL | S_IWUSR | S_IRUSR);
     if(mem_inicio < 0) {
         perror("Erro ao criar a memoria para salvar Inicio.\n");
         exit(1);
@@ -94,7 +94,7 @@ int main() {
     inicioRT = (int*)shmat(mem_inicio, 0, 0);
 
 
-    mem_duracao = shmget(duracao, sizeof(int), IPC_CREAT | S_IWUSR | S_IRUSR);
+    mem_duracao = shmget(duracao, sizeof(int), IPC_CREAT | IPC_EXCL | S_IWUSR | S_IRUSR);
     if(mem_duracao < 0) {
         perror("Erro ao criar a memoria para salvar Duracao.\n");
         exit(1);
