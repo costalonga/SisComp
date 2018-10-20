@@ -1,4 +1,5 @@
 #include "estrutura.h"
+#include <string.h>
 
 Fila* cria_Fila() {
     Fila* nova = (Fila*)malloc(sizeof(Fila));
@@ -52,6 +53,29 @@ void remove_primeiro(Fila* fila) {
 
     fila->frente = fila->frente->proximo;
     free(fila->frente);
+}
+
+//Retorna o indice do processo na fila
+int Key_Index(Fila* fila, Prog* process) {
+        
+    int i=0;
+    Prog* aux = fila->frente;
+    
+    if (aux == NULL) {
+        //Se fila estiver vazia
+        return -2;
+    }
+    
+    while (aux != NULL) {
+        if (strcmp(process->nome, aux->nome) {
+            return i;
+        }
+        aux = aux->proximo;
+        i++;
+    }
+    
+    //Retorna -1 caso nao encontre o processo procurado    
+    return -1;            
 }
 
 

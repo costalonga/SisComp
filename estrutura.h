@@ -35,8 +35,12 @@ void insere(Fila* fila, char* nome, int tipo, int prioridade, int inicio_RT, int
 /* Imprime a lista */
 void imprime(Fila* fila);
 
-/**/
+/* Remove primeiro elemento da fila */
 void remove_primeiro(Fila* fila);
 
+/* Dado um processo retorna sua posicao na fila 
+*  Retorna -1 caso nao ache o elemento e -2 caso fila esteja vaiza
+*/
+int Key_Index(Fila* fila, Prog* process);
 
 #endif //ESTRUTURA_H
