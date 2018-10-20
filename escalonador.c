@@ -27,10 +27,13 @@
 /* Funcoes */
 
 void executaRT(Fila* fila, unsigned int tempo);
+void executaPR(Fila* fila, unsigned int tempo);
+int PR_Compara_Prioridade(Fila* fila, Prog* p1, Prog* p2);
 bool checa_Criado(char* nome, char** vec);
 char** aloca_Vec();
 void imprime_vec(char** vec);
 void insere_Processo(char** vec, char* nome);
+
 
 /* ***************** */
 
@@ -39,6 +42,10 @@ void insere_Processo(char** vec, char* nome);
 
 int CORRENTE;                   /* Variavel que guarda a qtd de elementos no vetor de RT */
 bool executandoRT = false;      /* Variavel que indica se ha (true) ou nao (false) um RT sendo executado */
+<<<<<<< HEAD
+bool executandoPR = false;      /* Variavel que indica se ha (true) ou nao (false) um PR sendo executado */
+=======
+>>>>>>> 86ecd5259a71e3f7f0ffe70e82d6be642195cdeb
 pid_t pidAtual;                 /* Variavel que guarda o pid do RT sendo executado */
 char** processosRT;             /* Vetor que mantem registro dos RT ja executados */
 bool retomada = false;          /* Variavel auxiliar que indica quando um processo foi retomado (true) ou nao (false) */
@@ -152,18 +159,27 @@ int main() {
 
         /*
             executaRT();
+<<<<<<< HEAD
+=======
 
+>>>>>>> 86ecd5259a71e3f7f0ffe70e82d6be642195cdeb
             if(executandoRTRT == false) {
                 executaPR();  <- executandoRTPR = true;
             else {
                 stopPR();
             }
+<<<<<<< HEAD
+=======
 
+>>>>>>> 86ecd5259a71e3f7f0ffe70e82d6be642195cdeb
                 if(executandoRTPR == false) {
                     executaRR();
                 }
             }
+<<<<<<< HEAD
+=======
 
+>>>>>>> 86ecd5259a71e3f7f0ffe70e82d6be642195cdeb
         */
         
         if(*n_linha == 1) {
@@ -229,6 +245,11 @@ int main() {
     return 0;
 }
 
+<<<<<<< HEAD
+/********************************** Execucao dos Processos ***************************************************/
+
+=======
+>>>>>>> 86ecd5259a71e3f7f0ffe70e82d6be642195cdeb
 /* Funcao que trata do escalonamento dos processos RT */
 void executaRT(Fila* fila, unsigned int tempo) {
 
@@ -284,12 +305,103 @@ void executaRT(Fila* fila, unsigned int tempo) {
             printf("Processo de ID %d parado aos %d segundos.\n", aux->pid, tempo);
             executandoRT = false;
             retomada = false;
+<<<<<<< HEAD
         }
 
     }
 
 }
 
+void executaPR(Fila* fila, unsigned int tempo) {
+    
+    Prog* aux = fila->frente;
+    char* const argv[] = {NULL};
+    pid_t pid;
+
+    //TODO nao sei se isso é realmente necessario ou se a fila ja estaria andando a cada etapa....
+    //obtendo o primeiro processo PR mais prioritario na fila
+    while(aux->tipo != 2) {
+        aux = aux->proximo;
+    }
+    
+    //Se nao houver nenhum processo RT ou de PR executando no momento ele pode ser executado
+    if (executandoRT == false && executandoPR == false) {
+         
+        if((pid = fork()) == 0) {
+            execv(aux->nome, argv);
+=======
+>>>>>>> 86ecd5259a71e3f7f0ffe70e82d6be642195cdeb
+        }
+
+        else {
+            executandoPR = true;
+            printf("ID do processo criado aos %d segundos: %d\n", tempo, pid);
+            aux->pid = pid;
+            pidAtual = pid;
+        }
+    }
+    
+    //verifica se é um de prioridade maior ou menor em execucao
+    else if (executandoPR == true) {
+        
+        //Pega processo PR atual corrente
+        Prog* PR_AtualProcess = acha_Prog_corrente(fila, pidAtual);
+        
+        //Compara processo atual sendo executado com o processo PR encontrado na fila
+        int comparacao = PR_Compara_Prioridade(fila, aux, PR_AtualProcess);
+        
+        //Se aux eh mais prioritario que processo atual
+        if (comparacao == 1) { 
+            
+            if((pid = fork()) == 0) {
+                execv(aux->nome, argv);
+            }
+            else {
+                executandoPR = true;
+                printf("ID do processo criado aos %d segundos: %d\n", tempo, pid);
+                aux->pid = pid;
+                pidAtual = pid;
+            }
+        }
+        
+        else {
+            //TODO do nothing?
+            //Processo atual eh mais prioritario
+        }
+    }
+}
+
+
+/**********************************************************************************************************/
+
+/*
+* Retorna 1 se p1 eh mais prioritario que p2
+* Retorna -1 se p1 eh menos prioritario que p1
+* Casos de prioridade iguais, desempate eh feito pelo tempo de chegada (posicao na fila)
+*/
+int PR_Compara_Prioridade(Fila* fila, Prog* p1, Prog* p2) {
+    
+    int prio1 = p1->prioridade;
+    int prio2 = p2->prioridade;
+    
+    if (prio1 > prio2) {
+        return 1;
+    }
+
+    else if (prio1 == prio2) {
+        //Considerando que 2 processos nunca vao chegar ao mesmo tempo
+        return Compara_Index(fila, p1, p2);       
+    }
+    
+    else {
+        return -1;
+    }    
+}
+
+<<<<<<< HEAD
+
+=======
+>>>>>>> 86ecd5259a71e3f7f0ffe70e82d6be642195cdeb
 /* Funcao que verifica se o processo ja foi criado e executado previamente. Utilizada a partir do segundo minuto. */
 bool checa_Criado(char* nome, char** vec) {
 

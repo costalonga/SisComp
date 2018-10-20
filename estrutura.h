@@ -38,9 +38,12 @@ void imprime(Fila* fila);
 /* Remove primeiro elemento da fila */
 void remove_primeiro(Fila* fila);
 
-/* Dado um processo retorna sua posicao na fila 
-*  Retorna -1 caso nao ache o elemento e -2 caso fila esteja vaiza
-*/
+// Dado um processo retorna sua posicao na fila 
+// Retorna -1 caso nao ache o elemento e -2 caso fila esteja vaiza
 int Key_Index(Fila* fila, Prog* process);
+
+// Retorna  1 se p1 esta antes de p2 na fila
+// Retorna -1 se p2 esta antes de p1 na fila
+int Compara_Index(Fila* fila, Prog* p1, Prog* p2);
 
 #endif //ESTRUTURA_H
