@@ -186,7 +186,6 @@ int main() {
         }
         
         executaRT(filaRT, tAtual); 
-    }
     
     imprime(filaRT); 
     /* Terminou escalonamento */
