@@ -1,2 +1,0 @@
-# SisComp
-T1
