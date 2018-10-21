@@ -427,7 +427,7 @@ void executaPR(Fila* fila, unsigned int tempo) {
     espera_Vazia = vazia(filaEspera_PR);
 
     // Nao tem nenhum PR executando
-    if(executandoPR = false) {
+    if(executandoPR == false) {
 
         // Executa um novo programa, se a fila de espera estiver vazia
         if(espera_Vazia == true) {
