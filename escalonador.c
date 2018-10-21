@@ -278,19 +278,19 @@ void executaRT(Fila* fila, unsigned int tempo, Fila* filaPR) {
         if(verifica_Executado == true) {
 
             if(retomada == false) {
-                    printf("Retomando o processo de ID %d\n", aux->pid);
-                    kill(aux->pid, SIGCONT);
-                    executandoRT = true;
-                    pidAtualRT = aux->pid;
-                    retomada = true;
-                    return;
-                }
+                printf("Retomando o processo de ID %d\n", aux->pid);
+                kill(aux->pid, SIGCONT);
+                executandoRT = true;
+                pidAtualRT = aux->pid;
+                retomada = true;
+                return;
+            }
         }
 
 
         if((pid = fork()) == 0) {
-                execv(aux->nome, argv);
-            }
+            execv(aux->nome, argv);
+        }
 
         else {
             retomada = false;
@@ -413,6 +413,7 @@ void executaPR(Fila* fila, unsigned int tempo) {
     bool filaPR_Vazia = vazia(fila);
 
     if(filaPR_Vazia == true) {
+        printf("Fila PR está vazia\n");
         return;
     }
 
@@ -421,8 +422,6 @@ void executaPR(Fila* fila, unsigned int tempo) {
     pid_t pid;
     bool espera_Vazia = false;
     int maior_Prioridade;
-
-
 
     espera_Vazia = vazia(filaEspera_PR);
 
@@ -451,13 +450,13 @@ void executaPR(Fila* fila, unsigned int tempo) {
 
             // Se o da fila possuir maior prioridade
             if(maior_Prioridade == 1) {
-                    printf("Retomando processo de ID %d aos %d segundos \n", pid, tempo);
-                    kill(primeiro_FilaEspera->pid, SIGCONT);
-                    executandoPR = true;
-                    pidAtualPR = pid;
-                    insere(filaEspera_PR, aux->nome, aux->tipo, aux->prioridade, -1, -1, -1);
-                    //Remove da espera
-                
+                printf("Retomando processo de ID %d aos %d segundos \n", pid, tempo);
+                kill(primeiro_FilaEspera->pid, SIGCONT);
+                executandoPR = true;
+                pidAtualPR = pid;
+                insere(filaEspera_PR, aux->nome, aux->tipo, aux->prioridade, -1, -1, -1); //TODO pq inserir com -1???
+                //Remove da espera
+            
             }
 
             // Se o novo possuir maior prioridade
