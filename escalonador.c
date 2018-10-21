@@ -65,7 +65,6 @@ int main() {
     int mem_n_linha, mem_f_arq, mem_tipo, mem_nome, mem_prioridade, mem_inicio, mem_duracao, mem_nome_prog_dep, mem_trig;
     time_t tInicio = time(NULL);
     unsigned int tAtual;
-    char* const argv[] = {NULL};
 
     processosRT = aloca_Vec();
     //processosPR = aloca_Vec();
@@ -248,7 +247,7 @@ int main() {
 void executaRT(Fila* fila, unsigned int tempo, Fila* filaPR) {
 
     Prog* aux = fila->frente;
-    char* const argv[] = {NULL};
+    char* argv[] = {aux->nome, NULL};
     pid_t pid;
     bool verifica_Executado = false;
 
@@ -258,7 +257,6 @@ void executaRT(Fila* fila, unsigned int tempo, Fila* filaPR) {
         kill(prATUAL->pid, SIGSTOP);
         insere(filaEspera_PR, prATUAL->nome, prATUAL->tipo, prATUAL->prioridade, -1, -1, prATUAL->pid);
     }
-
 
     if(executandoRT == false) {
     
@@ -287,7 +285,8 @@ void executaRT(Fila* fila, unsigned int tempo, Fila* filaPR) {
 
 
         if((pid = fork()) == 0) {
-            execv(aux->nome, argv);
+            argv[0] = aux->nome;
+            execv(argv[0], argv);
         }
 
         else {
@@ -414,7 +413,7 @@ void executaPR(Fila* fila, unsigned int tempo) {
     }
 
     Prog* aux = fila->frente;
-    char* const argv[] = {NULL};
+    char* argv[] = {aux->nome,NULL};
     pid_t pid;
     bool espera_Vazia = false;
     int maior_Prioridade;
@@ -428,7 +427,8 @@ void executaPR(Fila* fila, unsigned int tempo) {
         if(espera_Vazia == true) {
 
             if((pid = fork()) == 0) {
-                execv(aux->nome, argv);
+                argv[0] = aux->nome;
+                execv(argv[0], argv);
             }
 
             else {
@@ -462,7 +462,8 @@ void executaPR(Fila* fila, unsigned int tempo) {
                 // Se nao estiver na fila de espera
                 if(presente == false) {
                     if((pid = fork()) == 0) {
-                        execv(aux->nome, argv);
+                        argv[0] = aux->nome;
+                        execv(argv[0], argv);
                     }
 
                     else {
