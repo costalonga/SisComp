@@ -30,7 +30,7 @@ struct fila
 Fila* cria_Fila();
 
 /* Insere um elemento na lista dada */
-void insere(Fila* fila, char* nome, int tipo, int prioridade, int inicio_RT, int duracao_RT);
+void insere(Fila* fila, char* nome, int tipo, int prioridade, int inicio_RT, int duracao_RT, pid_t pid);
 
 /* Imprime a lista */
 void imprime(Fila* fila);
@@ -45,5 +45,7 @@ int Key_Index(Fila* fila, Prog* process);
 // Retorna  1 se p1 esta antes de p2 na fila
 // Retorna -1 se p2 esta antes de p1 na fila
 int Compara_Index(Fila* fila, Prog* p1, Prog* p2);
+
+Prog* acha_Prog_corrente(Fila* fila, pid_t pidAtual);
 
 #endif //ESTRUTURA_H

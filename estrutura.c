@@ -8,7 +8,7 @@ Fila* cria_Fila() {
 }
 
 
-void insere(Fila* fila, char* nome, int tipo, int prioridade, int inicio_RT, int duracao_RT) {
+void insere(Fila* fila, char* nome, int tipo, int prioridade, int inicio_RT, int duracao_RT, pid_t pid) {
 
     Prog* novo = (Prog*)malloc(sizeof(Prog));
 
@@ -17,7 +17,7 @@ void insere(Fila* fila, char* nome, int tipo, int prioridade, int inicio_RT, int
     novo->prioridade = prioridade;
     novo->inicio = inicio_RT;
     novo->duracao = duracao_RT;
-    pid_t pid = 0;
+    novo->pid = pid;
     novo->proximo = NULL;
 
     
@@ -111,9 +111,24 @@ int Compara_Index(Fila* fila, Prog* p1, Prog* p2) {
     else {
         return -1;
     }
-    
 }
 
+
+Prog* acha_Prog_corrente(Fila* fila, pid_t pidAtual) {
+    Prog* aux = fila->frente;
+    
+    while(aux->pid != pidAtual && aux != NULL) {
+        aux = aux->proximo;
+    }
+    
+    if(aux->pid == pidAtual) {
+        return aux;
+    }
+    
+    //Caso nao ache o PID
+    return NULL;
+    
+}
 
 
 
