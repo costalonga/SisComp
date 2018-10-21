@@ -79,6 +79,41 @@ int Key_Index(Fila* fila, Prog* process) {
     return -1;            
 }
 
+// Retorna  1 se p1 esta antes de p2 na fila
+// Retorna -1 se p2 esta antes de p1 na fila
+int Compara_Index(Fila* fila, Prog* p1, Prog* p2) {
+        
+    int i=0;
+    int indc_p1 = Key_Index(fila,p1);
+    int indc_p2 = Key_Index(fila,p2);
+    Prog* aux = fila->frente;
+    
+    if (aux == NULL) {
+        //Se fila estiver vazia
+        printf("Fila Vazia\n\n");
+        return -2;
+    }
+    
+    if (indc_p1 == -1) {
+        printf("Erro! Processo: %s nao esta na fila", p1->nome);
+        return -2;
+    }
+    
+    if (indc_p2 == -1) {
+        printf("Erro! Processo: %s nao esta na fila", p2->nome);
+        return -2;
+    }
+    
+    if (indc_p1 > indc_p2) {
+        return 1;
+    }
+    
+    else {
+        return -1;
+    }
+    
+}
+
 
 
 
