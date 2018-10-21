@@ -28,8 +28,6 @@ void insere(Fila* fila, char* nome, int tipo, int prioridade, int inicio_RT, int
         fila->fim->proximo = novo;
         fila->fim = novo;
     }
-
-    
 }
 
 
@@ -50,9 +48,9 @@ void imprime(Fila* fila) {
 
 
 void remove_primeiro(Fila* fila) {
-
+    Fila* temp = fila->frente;
     fila->frente = fila->frente->proximo;
-    free(fila->frente);
+    free(temp);
 }
 
 //Retorna o indice do processo na fila
