@@ -8,7 +8,7 @@
 #define OUTER_LOOP 1000
 
 int main() {
-    char* stProcess= "PROCESSO N CPU"; //TODO alterar mensagem de acordo com cada processo   
+    char* stProcess= "PROCESSO 1 CPU"; //TODO alterar mensagem de acordo com cada processo   
     
     long long int fibo[SIZE];
     long long int c1,c2,c3;

@@ -34,8 +34,8 @@ void insere_Processo(char** vec, char* nome);
 void insere_Processo_PR(char** vec, char* nome);
 int PR_Compara_Prioridade(Fila* fila, Prog* p1, Prog* p2);
 void executaPR(Fila* fila, unsigned int tempo);
-int Compara_Index(Fila* fila, Prog* p1, Prog* p2);
 bool vazia(Fila* fila);
+Prog* acha_Prog_corrente(Fila* fila, pid_t pidAtual);
 
 /* ***************** */
 
@@ -195,7 +195,7 @@ int main() {
         }
     
         executaRT(filaRT, tAtual);
-        executaPR(filaPR, tAtual);  
+        //executaPR(filaPR, tAtual);  
     }
     
     /* Terminou escalonamento */
@@ -302,6 +302,25 @@ bool checa_Criado(char* nome, char** vec) {
 
     return false;
 }
+
+
+//TODO Ajeitar a acha_Prog_corrente()
+Prog* acha_Prog_corrente(Fila* fila, pid_t pidAtual) {
+    Prog* aux = fila->frente;
+    
+    while(aux->pid != pidAtual && aux != NULL) {
+        aux = aux->proximo;
+    }
+    
+    if(aux->pid == pidAtual) {
+        return aux;
+    }
+    
+    //Caso nao ache o PID
+    return NULL;
+    
+}
+
 
 /* Funcao auxiliar que serve para alocar o vetor de RT */
 char** aloca_Vec() {
@@ -469,42 +488,6 @@ void executaPR(Fila* fila, unsigned int tempo) {
         }
     }
 }
-
-// Retorna  1 se p1 esta antes de p2 na fila
-// Retorna -1 se p2 esta antes de p1 na fila
-int Compara_Index(Fila* fila, Prog* p1, Prog* p2) {
-        
-    int i=0;
-    int indc_p1 = Key_Index(fila,p1);
-    int indc_p2 = Key_Index(fila,p2);
-    Prog* aux = fila->frente;
-    
-    if (aux == NULL) {
-        //Se fila estiver vazia
-        printf("Fila Vazia\n\n");
-        return -2;
-    }
-    
-    if (indc_p1 == -1) {
-        printf("Erro! Processo: %s nao esta na fila", p1->nome);
-        return -2;
-    }
-    
-    if (indc_p2 == -1) {
-        printf("Erro! Processo: %s nao esta na fila", p2->nome);
-        return -2;
-    }
-    
-    if (indc_p1 > indc_p2) {
-        return 1;
-    }
-    
-    else {
-        return -1;
-    }
-    
-}
-
 
 bool vazia(Fila* fila) {
 
