@@ -111,7 +111,6 @@ int Compara_Index(Fila* fila, Prog* p1, Prog* p2) {
     }
 }
 
-
 Prog* acha_Prog_corrente(Fila* fila, pid_t pidAtual) {
     Prog* aux = fila->frente;
     
@@ -128,7 +127,31 @@ Prog* acha_Prog_corrente(Fila* fila, pid_t pidAtual) {
     
 }
 
+void Fila_InsereP_existente(Fila* fila, Prog* p) {
 
+    Prog* novo = (Prog*)malloc(sizeof(Prog));
+    novo->nome = p->nome;
+    novo->tipo = p->tipo;
+    novo->prioridade = p->prioridade;
+    novo->inicio = p->inicio;
+    novo->duracao = p->duracao;
+    novo->pid = p->pid;
+    novo->proximo = NULL;
+    if(fila->fim == NULL) {
+        fila->frente = fila->fim = novo;
+    }
+    else {
+        fila->fim->proximo = novo;
+        fila->fim = novo;
+    }
+}
+
+void Fila_TurnAround (Fila* fila) {
+    
+    Prog* oldFirst = fila->frente;
+    Fila_InsereP_existente(fila, oldFirst);
+    remove_primeiro(fila);
+}
 
 
 

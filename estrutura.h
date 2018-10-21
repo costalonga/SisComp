@@ -48,4 +48,8 @@ int Compara_Index(Fila* fila, Prog* p1, Prog* p2);
 
 Prog* acha_Prog_corrente(Fila* fila, pid_t pidAtual);
 
+void Fila_InsereP_existente(Fila* fila, Prog* p);
+
+void Fila_TurnAround (Fila* fila);
+
 #endif //ESTRUTURA_H
