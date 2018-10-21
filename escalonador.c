@@ -5,6 +5,7 @@
 #include <sys/shm.h>
 #include <sys/ipc.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <time.h>
 #include <signal.h>
 #include <stdbool.h>
@@ -31,11 +32,13 @@ bool checa_Criado(char* nome, char** vec);
 char** aloca_Vec();
 void imprime_vec(char** vec);
 void insere_Processo(char** vec, char* nome);
-void insere_Processo_PR(char** vec, char* nome);
-int PR_Compara_Prioridade(Fila* fila, Prog* p1, Prog* p2);
+//void insere_FilaEspera(Fila* fila, )
+void insere_Processo_PR(char** vec, char* nome);    /* Talvez nao precise */
+int PR_Compara_Prioridade(Prog* p1, Prog* p2);      /* Mudei */
 void executaPR(Fila* fila, unsigned int tempo);
+int Compara_Index(Fila* fila, Prog* p1, Prog* p2);  /* Talvez nao precise */
 bool vazia(Fila* fila);
-Prog* acha_Prog_corrente(Fila* fila, pid_t pidAtual);
+bool compara_Prioridade(Fila* fila, int prio, unsigned int tempo);
 
 /* ***************** */
 
@@ -65,7 +68,7 @@ int main() {
     char* const argv[] = {NULL};
 
     processosRT = aloca_Vec();
-    processosPR = aloca_Vec();
+    //processosPR = aloca_Vec();
     CORRENTE = 0;
     CORRENTE_PR = 0;
 
@@ -172,7 +175,7 @@ int main() {
 
 
             else if(*tipo == 2) {
-                //printf("Tipo: %d (PR)  Nome: %s   Prioridade: %d\n", *tipo, nome, *prioridade);
+                printf("Tipo: %d (PR)  Nome: %s   Prioridade: %d\n", *tipo, nome, *prioridade);
                 insere(filaPR, nome, *tipo, *prioridade, -1, -1);
             }
 
@@ -187,15 +190,30 @@ int main() {
 
                 /* Caso nao dependa de nenhum programa */
                 else {
-                    insere(filaRT, nome, *tipo, -1, *inicioRT, *duracaoRT);      
+                    if((*inicioRT + *duracaoRT) < 60) {
+                        insere(filaRT, nome, *tipo, -1, *inicioRT, *duracaoRT);
+                    }      
                 }
             }
 
             *n_linha = 0; 
         }
-    
-        executaRT(filaRT, tAtual);
-        //executaPR(filaPR, tAtual);  
+        
+            executaRT(filaRT, tAtual);
+            
+            if(executandoRT == false) {
+
+                if(executandoPR == false) {
+                    // Executa RR
+                }
+
+                // executaPR(filaPR, tAtual);
+            }
+
+            else {
+                // stopPR();
+            }
+            
     }
     
     /* Terminou escalonamento */
@@ -303,25 +321,6 @@ bool checa_Criado(char* nome, char** vec) {
     return false;
 }
 
-
-//TODO Ajeitar a acha_Prog_corrente()
-Prog* acha_Prog_corrente(Fila* fila, pid_t pidAtual) {
-    Prog* aux = fila->frente;
-    
-    while(aux->pid != pidAtual && aux != NULL) {
-        aux = aux->proximo;
-    }
-    
-    if(aux->pid == pidAtual) {
-        return aux;
-    }
-    
-    //Caso nao ache o PID
-    return NULL;
-    
-}
-
-
 /* Funcao auxiliar que serve para alocar o vetor de RT */
 char** aloca_Vec() {
 
@@ -374,13 +373,12 @@ void insere_Processo_PR(char** vec, char* nome) {
     CORRENTE_PR++;
 }
 
-
 /*
 * Retorna 1 se p1 eh mais prioritario que p2
 * Retorna -1 se p1 eh menos prioritario que p1
 * Casos de prioridade iguais, desempate eh feito pelo tempo de chegada (posicao na fila)
 */
-int PR_Compara_Prioridade(Fila* fila, Prog* p1, Prog* p2) {
+int PR_Compara_Prioridade(Prog* p1, Prog* p2) {     /* Modifiquei */
     
     int prio1 = p1->prioridade;
     int prio2 = p2->prioridade;
@@ -389,11 +387,13 @@ int PR_Compara_Prioridade(Fila* fila, Prog* p1, Prog* p2) {
         return 1;
     }
 
+    /*
     else if (prio1 == prio2) {
         //Considerando que 2 processos nunca vao chegar ao mesmo tempo
         return Compara_Index(fila, p1, p2);       
     }
-    
+    */
+
     else {
         return -1;
     }    
@@ -403,6 +403,166 @@ int PR_Compara_Prioridade(Fila* fila, Prog* p1, Prog* p2) {
 void executaPR(Fila* fila, unsigned int tempo) {
     
     Prog* aux = fila->frente;
+    char* const argv[] = {NULL};
+    pid_t pid;
+    bool espera_Vazia = false;
+    int maior_Prioridade;
+
+    espera_Vazia = vazia(filaEspera_PR);
+
+    // Nao tem nenhum PR executando
+    if(executandoPR = false) {
+
+        // Executa um novo programa, se a fila de espera estiver vazia
+        if(espera_Vazia == true) {
+
+            if((pid = fork()) == 0) {
+                execv(aux->nome, argv);
+            }
+
+            else {
+                printf("Executando programa de ID %d aos %d segundos\n", pid, tempo);
+                aux->pid = pid;
+                executandoPR = true;
+                pidAtualPR = pid;  
+            }
+        }
+
+        // Executa da fila, se este possuir maior prioridade
+        else {
+            Prog* primeiro_FilaEspera = filaEspera_PR->frente;
+            maior_Prioridade = PR_Compara_Prioridade(primeiro_FilaEspera, aux);
+
+            // Se o da fila possuir maior prioridade
+            if(maior_Prioridade == 1) {
+
+                if((pid = fork()) == 0) {
+                    execv(primeiro_FilaEspera->nome, argv);
+                }
+
+                else {
+                    printf("Retomando processo de ID %d aos %d segundos \n", pid, tempo);
+                    kill(primeiro_FilaEspera->pid, SIGCONT);
+                    executandoPR = true;
+                    pidAtualPR = pid;
+                    // Insere o atual na fila de espera
+                }
+            }
+
+            // Se o novo possuir maior prioridade
+            else {
+
+                if((pid = fork()) == 0) {
+                    execv(aux->nome, argv);
+                }
+
+                else {
+                    printf("Executando processo de ID %d aos %d segundos\n", pid, tempo);
+                    executandoPR = true;
+                    pidAtualPR = pid;
+                    aux->pid = pid;
+                }
+
+            }
+
+        }
+    }
+
+    // Ja tem algum PR executando, compara prioridade
+    else {
+        bool prio;
+
+        // Comparando ATUAL com NOVO
+        prio = compara_Prioridade(fila, aux->prioridade, tempo);
+
+        // Se o atual for MAIS prioritario
+        if(compara_Prioridade == false) {
+            // Insere o novo na fila de espera
+        }
+
+        // Se o novo for MAIS prioritario
+        else {
+            printf("Processo de ID %d interrompido aos %d segundos\n", pidAtualPR, tempo);
+            kill(pidAtualPR, SIGSTOP);
+            // Insere na fila de espera
+        }
+    }
+    
+}
+
+bool compara_Prioridade(Fila* fila, int prio, unsigned int tempo) {
+
+    Prog* aux = fila->frente;
+
+    while(aux->pid != pidAtualPR) {
+        aux = aux->proximo;
+    }
+
+    // Se o atual for MENOS prioritario -> fila de espera (atual)
+    if(aux->prioridade > prio) {
+        return true;
+    }
+
+    // Se o atual for MAIS prioritario -> fila de espera (novo)
+    else {
+        return false;
+    }
+}
+
+
+// Retorna  1 se p1 esta antes de p2 na fila
+// Retorna -1 se p2 esta antes de p1 na fila
+int Compara_Index(Fila* fila, Prog* p1, Prog* p2) {
+        
+    int i=0;
+    int indc_p1 = Key_Index(fila,p1);
+    int indc_p2 = Key_Index(fila,p2);
+    Prog* aux = fila->frente;
+    
+    if (aux == NULL) {
+        //Se fila estiver vazia
+        printf("Fila Vazia\n\n");
+        return -2;
+    }
+    
+    if (indc_p1 == -1) {
+        printf("Erro! Processo: %s nao esta na fila", p1->nome);
+        return -2;
+    }
+    
+    if (indc_p2 == -1) {
+        printf("Erro! Processo: %s nao esta na fila", p2->nome);
+        return -2;
+    }
+    
+    if (indc_p1 > indc_p2) {
+        return 1;
+    }
+    
+    else {
+        return -1;
+    }
+    
+}
+
+
+bool vazia(Fila* fila) {
+
+    if(fila->frente == NULL) {
+        return true;
+    }
+
+    return false;
+}
+
+
+
+
+
+
+/*
+
+Prog* aux = fila->frente;
     char* const argv[] = {NULL};
     pid_t pid;
 
@@ -438,6 +598,7 @@ void executaPR(Fila* fila, unsigned int tempo) {
             int comparacao2 = PR_Compara_Prioridade(filaEspera_PR, aux, filaEspera_PR->frente);
 
             /* Executa o novo, nao o da fila de espera*/
+            /*
             if(comparacao2 == 1) {
                 printf("Retomando o processo de ID: %d", aux->pid);
                 kill(aux->pid, SIGCONT);
@@ -445,8 +606,9 @@ void executaPR(Fila* fila, unsigned int tempo) {
                 pidAtualPR = aux->pid;
                 return;
             }
-
+            */
             /* Executa da fila de espera */
+            /*
             else {
                 printf("Retomando o processo de ID: %d", filaEspera_PR->frente->pid);
                 kill(filaEspera_PR->frente->pid, SIGCONT);
@@ -487,13 +649,31 @@ void executaPR(Fila* fila, unsigned int tempo) {
             
         }
     }
-}
 
-bool vazia(Fila* fila) {
-
-    if(fila->frente == NULL) {
-        return true;
+    else if(executandoRT == true) {
+        insere(filaEspera_PR, aux->nome, aux->tipo, aux->prioridade, -1, -1);
     }
 
-    return false;
+    */ 
+
+
+/*
+   int PR_Compara_Prioridade(Fila* fila, Prog* p1, Prog* p2) {     
+    
+    int prio1 = p1->prioridade;
+    int prio2 = p2->prioridade;
+    
+    if (prio1 > prio2) {
+        return 1;
+    }
+
+    else if (prio1 == prio2) {
+        //Considerando que 2 processos nunca vao chegar ao mesmo tempo
+        return Compara_Index(fila, p1, p2);       
+    }
+    
+    else {
+        return -1;
+    }    
 }
+*/
