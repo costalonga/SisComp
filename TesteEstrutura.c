@@ -1,5 +1,7 @@
-#include "estrutura.h"
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "estrutura.h"
 
 Fila* cria_Fila() {
     Fila* nova = (Fila*)malloc(sizeof(Fila));
@@ -30,6 +32,28 @@ void insere(Fila* fila, char* nome, int tipo, int prioridade, int inicio_RT, int
     }
 }
 
+void Fila_InsereP_existente(Fila* fila, Prog* p) {
+
+    Prog* novo = (Prog*)malloc(sizeof(Prog));
+
+    novo->nome = p->nome;
+    novo->tipo = p->tipo;
+    novo->prioridade = p->prioridade;
+    novo->inicio = p->inicio;
+    novo->duracao = p->duracao;
+    novo->pid = p->pid;
+    novo->proximo = NULL;
+
+    
+    if(fila->fim == NULL) {
+        fila->frente = fila->fim = novo;
+    }
+    else {
+        fila->fim->proximo = novo;
+        fila->fim = novo;
+    }
+}
+
 
 void imprime(Fila* fila) {
 
@@ -48,7 +72,7 @@ void imprime(Fila* fila) {
 
 
 void remove_primeiro(Fila* fila) {
-    Fila* temp = fila->frente;
+    Prog* temp = fila->frente;
     fila->frente = fila->frente->proximo;
     free(temp);
 }
@@ -111,6 +135,7 @@ int Compara_Index(Fila* fila, Prog* p1, Prog* p2) {
     }
 }
 
+
 Prog* acha_Prog_corrente(Fila* fila, pid_t pidAtual) {
     Prog* aux = fila->frente;
     
@@ -127,25 +152,6 @@ Prog* acha_Prog_corrente(Fila* fila, pid_t pidAtual) {
     
 }
 
-void Fila_InsereP_existente(Fila* fila, Prog* p) {
-
-    Prog* novo = (Prog*)malloc(sizeof(Prog));
-    novo->nome = p->nome;
-    novo->tipo = p->tipo;
-    novo->prioridade = p->prioridade;
-    novo->inicio = p->inicio;
-    novo->duracao = p->duracao;
-    novo->pid = p->pid;
-    novo->proximo = NULL;
-    if(fila->fim == NULL) {
-        fila->frente = fila->fim = novo;
-    }
-    else {
-        fila->fim->proximo = novo;
-        fila->fim = novo;
-    }
-}
-
 void Fila_TurnAround (Fila* fila) {
     
     Prog* oldFirst = fila->frente;
@@ -153,5 +159,48 @@ void Fila_TurnAround (Fila* fila) {
     remove_primeiro(fila);
 }
 
+int main (void) {
+    
+    Fila* f = cria_Fila();
+    
+    char* nome1 = "P1";
+    char* nome2 = "P2";
+    char* nome3 = "P3";
+    char* nome4 = "P4";
+    int tipo1 = 1;
+    int tipo2 = 2;
+    int tipo3 = 3;
+    int prioridade = 2;
+    int inicio = 0;
+    int duracao = 10;
+    int pid = 0;
+    
+    insere(f, nome1, tipo1, prioridade, inicio, duracao, pid);
+    insere(f, nome2, tipo3, prioridade, inicio, duracao, pid);
+    insere(f, nome3, tipo1, prioridade, inicio, duracao, pid);
+    insere(f, nome4, tipo2, prioridade, inicio, duracao, pid);
 
-
+    printf("After insere\n");
+    imprime(f);
+    
+    Fila_TurnAround(f);
+    printf("\nAfter Turn Around\n");
+    imprime(f);
+    
+    remove_primeiro(f);
+    remove_primeiro(f);
+    printf("\nAfter remove\n");
+    imprime(f);
+    
+    insere(f, nome1, tipo1, prioridade, inicio, duracao, pid);
+    printf("\nAfter insere novamente\n");
+    imprime(f);
+    
+    printf("\nAfter Turn Around\n");
+    Fila_TurnAround(f);
+    imprime(f);
+    
+    
+    return 0;
+    
+}
