@@ -48,7 +48,7 @@ void imprime(Fila* fila) {
 
 
 void remove_primeiro(Fila* fila) {
-    Fila* temp = fila->frente;
+    Prog* temp = fila->frente;
     fila->frente = fila->frente->proximo;
     free(temp);
 }
@@ -81,7 +81,6 @@ int Key_Index(Fila* fila, Prog* process) {
 // Retorna -1 se p2 esta antes de p1 na fila
 int Compara_Index(Fila* fila, Prog* p1, Prog* p2) {
         
-    int i=0;
     int indc_p1 = Key_Index(fila,p1);
     int indc_p2 = Key_Index(fila,p2);
     Prog* aux = fila->frente;

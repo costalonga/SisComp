@@ -66,7 +66,7 @@ int main() {
     int mem_n_linha, mem_f_arq, mem_tipo, mem_nome, mem_prioridade, mem_inicio, mem_duracao, mem_nome_prog_dep, mem_trig;
     time_t tInicio = time(NULL);
     unsigned int tAtual;
-    char* const argv[] = {NULL};
+    char* argv[2] = {"PN",NULL};
 
     bool teste;
 
@@ -245,7 +245,7 @@ int main() {
 void executaRT(Fila* fila, unsigned int tempo, Fila* filaPR) {
 
     Prog* aux = fila->frente;
-    char* const argv[] = {NULL};
+    char* argv[2] = {"PN",NULL};
     pid_t pid;
     bool verifica_Executado = false;
 
@@ -285,7 +285,8 @@ void executaRT(Fila* fila, unsigned int tempo, Fila* filaPR) {
 
 
         if((pid = fork()) == 0) {
-            execv(aux->nome, argv);
+            argv[0] = aux->nome;
+            execv(argv[0], argv);
         }
 
         else {
@@ -430,7 +431,7 @@ bool executaPR(Fila* fila, unsigned int tempo) {
     }
 
     Prog* aux = fila->frente;
-    char* const argv[] = {NULL};
+    char* argv[2] = {"PN",NULL};
     pid_t pid;
     bool espera_Vazia = false;
     int maior_Prioridade;
@@ -443,7 +444,8 @@ bool executaPR(Fila* fila, unsigned int tempo) {
 
         if(espera_Vazia == true) {
             if((pid = fork()) == 0) {
-                execv(aux->nome, argv);
+                argv[0] = aux->nome;
+                execv(argv[0], argv);
             }
 
             else {
@@ -471,7 +473,8 @@ bool executaPR(Fila* fila, unsigned int tempo) {
 
                 else {
                     if((pid = fork()) == 0) {
-                        execv(primeiro_FilaEspera->nome, argv);
+                        argv[0] = primeiro_FilaEspera->nome;
+                        execv(argv[0], argv);
                     }
 
                     else {
@@ -515,7 +518,8 @@ bool executaPR(Fila* fila, unsigned int tempo) {
 
             if(aux->executado == false){
                 if((pid = fork()) == 0) {
-                    execv(aux->nome, argv);
+                    argv[0] = aux->nome;
+                    execv(argv[0], argv);
                 }
 
                 else {
@@ -535,7 +539,8 @@ bool executaPR(Fila* fila, unsigned int tempo) {
                 Fila_InsereP_existente(filaEspera_PR, corr);   //<<<<<<<<<<<<<<<<<<<
                 //imprime(filaEspera_PR);
                 if((pid = fork()) == 0) {
-                    execv(aux->nome, argv);
+                    argv[0] = aux->nome;
+                    execv(argv[0], argv);
                 }
 
                 else {
