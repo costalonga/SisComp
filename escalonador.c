@@ -461,32 +461,32 @@ bool executaPR(Fila* fila, unsigned int tempo) {
         // Executa da fila
         else {
             Prog* primeiro_FilaEspera = filaEspera_PR->frente;
+        
+            if(primeiro_FilaEspera->executado == true) {
+                printf("2 Retomando processo de ID %d aos %d segundos \n", primeiro_FilaEspera->pid, tempo); //////////////////
+                kill(primeiro_FilaEspera->pid, SIGCONT);
+                executandoPR = true;
+                pidAtualPR = primeiro_FilaEspera->pid;
+                remove_primeiro(filaEspera_PR);
+                return true;
+            }
 
-                if(primeiro_FilaEspera->executado == true) {
-                    printf("2 Retomando processo de ID %d aos %d segundos \n", primeiro_FilaEspera->pid, tempo); //////////////////
-                    kill(primeiro_FilaEspera->pid, SIGCONT);
-                    executandoPR = true;
-                    pidAtualPR = primeiro_FilaEspera->pid;
-                    remove_primeiro(filaEspera_PR);
-                    return true;
+            else {
+                if((pid = fork()) == 0) {
+                    argv[0] = primeiro_FilaEspera->nome;
+                    execv(argv[0], argv);
                 }
 
                 else {
-                    if((pid = fork()) == 0) {
-                        argv[0] = primeiro_FilaEspera->nome;
-                        execv(argv[0], argv);
-                    }
-
-                    else {
-                        printf("2-Executando processo de ID %d aos %d segundos\n", pid, tempo);
-                        executandoPR = true;
-                        pidAtualPR = pid;
-                        primeiro_FilaEspera->pid = pid;
-                        primeiro_FilaEspera->executado = true;
-                        remove_primeiro(filaEspera_PR);
-                        return true;
-                    }
+                    printf("2-Executando processo de ID %d aos %d segundos\n", pid, tempo);
+                    executandoPR = true;
+                    pidAtualPR = pid;
+                    primeiro_FilaEspera->pid = pid;
+                    primeiro_FilaEspera->executado = true;
+                    remove_primeiro(filaEspera_PR);
+                    return true;
                 }
+            }
         }
     }
 
@@ -554,10 +554,9 @@ bool executaPR(Fila* fila, unsigned int tempo) {
             }
         }
         
-        }
         //imprime(filaEspera_PR);
     }
-
+}
 
 
 bool compara_Prioridade(Fila* fila, int prio) {

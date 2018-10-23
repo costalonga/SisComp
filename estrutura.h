@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 
 typedef struct programa Prog;
@@ -16,6 +17,7 @@ struct programa
     int prioridade;
     int inicio;
     int duracao;
+    bool executado;
     pid_t pid;
     Prog* proximo;
 };
