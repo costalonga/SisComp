@@ -5,6 +5,7 @@
 #include <sys/shm.h>
 #include <sys/ipc.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 
 #define nova_linha 9020
 #define fim_arq 9021
@@ -36,7 +37,7 @@ int main() {
         exit(1);
     }
     trig = (int*)shmat(mem_trig, 0, 0);
-    
+
 
     mem_n_linha = shmget(nova_linha, sizeof(int), IPC_CREAT | S_IWUSR | S_IRUSR);
     if(mem_n_linha < 0) {
@@ -132,8 +133,6 @@ int main() {
         espacos = 0;
         k = 0;
         linha_Lida[strlen(linha_Lida) - 1] = '\0';
-
-        printf("Linha lida: %s \n", linha_Lida);
         
 
         for(i = 0; i < strlen(linha_Lida) - 1; i++) {
@@ -145,12 +144,12 @@ int main() {
         // Caso RR
         if(espacos == 1) {            
             *tipo = 1;
-
+            
             for(j = 4; j < 6; j++, k++) {
                 nome[k] = linha_Lida[j];
             }
             nome[k] = '\0';
-
+            *n_linha = 1;
         }
         
 
@@ -164,6 +163,7 @@ int main() {
             nome[k] = '\0';
 
             *prioridade = linha_Lida[10] - '0';
+            *n_linha = 1;
         }
         
 
@@ -222,15 +222,17 @@ int main() {
                     *duracaoRT = 10*(linha_Lida[j] - '0') + (linha_Lida[j+1] - '0');
                 }
             }
+            *n_linha = 1;
         }
         
-        *n_linha = 1;
+        //*n_linha = 1;
         sleep(1);
         
     }
+
     *f_arq = 1;
     fclose(exec);
-
+    
     /* Liberando memoria */
 
     shmdt(n_linha);
@@ -253,6 +255,7 @@ int main() {
     shmctl(mem_duracao, IPC_RMID, 0);
     shmctl(mem_nome, IPC_RMID, 0);
 
-
+    // So termina quando o escalonador terminar
+    wait(escalonador_PID);
 
 }
