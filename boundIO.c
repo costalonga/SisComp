@@ -5,9 +5,11 @@
 #include <unistd.h>
 
 int main() {
-    char* stProcess= "PROCESSO N I/O-bound "; //TODO alterar mensagem de acordo com cada processo   
-    
+    char* stProcess= "PROCESSO 8 I/O-bound "; //TODO alterar mensagem de acordo com cada processo   
+    char* Pini = "P8 Started - IO Bound Process\n";
     long long int i, pot, k=2;
+    
+    printf("%s",Pini); 
     
     while(1) {
         pot = k;

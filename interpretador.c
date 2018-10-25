@@ -21,6 +21,7 @@ int main() {
 
     FILE* exec;
     pid_t escalonador_PID;
+    int status = 0;
     int i, j, k, espacos;
     int *n_linha, *f_arq, *tipo, *prioridade, *inicioRT, *duracaoRT, *trig; 
     int mem_n_linha, mem_f_arq, mem_tipo, mem_nome, mem_prioridade, mem_inicio, mem_duracao, mem_nome_prog_dep, mem_trig;
@@ -256,6 +257,6 @@ int main() {
     shmctl(mem_nome, IPC_RMID, 0);
 
     // So termina quando o escalonador terminar
-    wait(escalonador_PID);
+    waitpid(escalonador_PID, &status, 0);
 
 }

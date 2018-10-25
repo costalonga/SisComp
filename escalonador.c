@@ -66,9 +66,8 @@ int main() {
     int mem_n_linha, mem_f_arq, mem_tipo, mem_nome, mem_prioridade, mem_inicio, mem_duracao, mem_nome_prog_dep, mem_trig;
     time_t tInicio = time(NULL);
     unsigned int tAtual;
-    char* const argv[] = {NULL};
-
-    bool teste;
+    //char* argv[] = {"Pn", NULL}; Unused-Variable
+    //bool teste; Unusde-Variable
 
     processosRT = aloca_Vec();
     CORRENTE = 0;
@@ -164,7 +163,8 @@ int main() {
             tAtual = 0;
             minutoNOVO = true;
         }
-
+        
+        // Sempre que interpretador ler uma linha nova, n_linha recebe 1
         if(*n_linha == 1) {
             
             if(*tipo == 1) {
@@ -214,7 +214,7 @@ int main() {
                     executaRR(filaRR, tAtual);
                 
             } 
-    }  
+        }  
     }
 
     
@@ -255,7 +255,7 @@ void executaRT(Fila* fila, unsigned int tempo, Fila* filaPR) {
         return;
     }
 
-    char* const argv[] = {NULL};
+    char* argv[] = {"Pn", NULL};
     pid_t pid;
     bool verifica_Executado = false;
 
@@ -295,7 +295,8 @@ void executaRT(Fila* fila, unsigned int tempo, Fila* filaPR) {
 
 
         if((pid = fork()) == 0) {
-            execv(aux->nome, argv);
+            argv[0] = aux->nome;
+            execv(argv[0], argv);
         }
 
         else {
@@ -408,10 +409,11 @@ bool executaPR(Fila* fila, unsigned int tempo) {
     }
 
     Prog* aux = fila->frente;
-    char* const argv[] = {NULL};
+    char* argv[] = {"Pn", NULL};
     pid_t pid;
     bool espera_Vazia = false;
-    int maior_Prioridade;
+    
+    //int maior_Prioridade; Unused-Variable
 
     espera_Vazia = vazia(filaEspera_PR);
 
@@ -421,7 +423,7 @@ bool executaPR(Fila* fila, unsigned int tempo) {
 
         if(espera_Vazia == true) {
             if((pid = fork()) == 0) {
-                execv(aux->nome, argv);
+                execv(argv[0], argv);
             }
 
             else {
@@ -438,30 +440,31 @@ bool executaPR(Fila* fila, unsigned int tempo) {
         else {
             Prog* primeiro_FilaEspera = filaEspera_PR->frente;
 
-                if(primeiro_FilaEspera->executado == true) {
-                    printf("2 Retomando processo de ID %d aos %d segundos \n", primeiro_FilaEspera->pid, tempo);
-                    kill(primeiro_FilaEspera->pid, SIGCONT);    
-                    executandoPR = true;
-                    pidAtualPR = primeiro_FilaEspera->pid;
-                    remove_primeiro(filaEspera_PR);
-                    return true;
+            if(primeiro_FilaEspera->executado == true) {
+                printf("2 Retomando processo de ID %d aos %d segundos \n", primeiro_FilaEspera->pid, tempo);
+                kill(primeiro_FilaEspera->pid, SIGCONT);    
+                executandoPR = true;
+                pidAtualPR = primeiro_FilaEspera->pid;
+                remove_primeiro(filaEspera_PR);
+                return true;
+            }
+
+            else {
+                if((pid = fork()) == 0) {
+                    argv[0] = primeiro_FilaEspera->nome;
+                    execv(argv[0], argv);
                 }
 
                 else {
-                    if((pid = fork()) == 0) {
-                        execv(primeiro_FilaEspera->nome, argv);
-                    }
-
-                    else {
-                        printf("2-Executando processo de ID %d aos %d segundos\n", pid, tempo);
-                        executandoPR = true;
-                        pidAtualPR = pid;
-                        primeiro_FilaEspera->pid = pid;
-                        primeiro_FilaEspera->executado = true;
-                        remove_primeiro(filaEspera_PR);
-                        return true;
-                    }
+                    printf("2-Executando processo de ID %d aos %d segundos\n", pid, tempo);
+                    executandoPR = true;
+                    pidAtualPR = pid;
+                    primeiro_FilaEspera->pid = pid;
+                    primeiro_FilaEspera->executado = true;
+                    remove_primeiro(filaEspera_PR);
+                    return true;
                 }
+            }
         }
     }
 
@@ -494,7 +497,8 @@ bool executaPR(Fila* fila, unsigned int tempo) {
 
             if(aux->executado == false){
                 if((pid = fork()) == 0) {
-                    execv(aux->nome, argv);
+                    argv[0] = aux->nome;
+                    execv(argv[0], argv);
                 }
 
                 else {
@@ -570,7 +574,7 @@ void executaRR(Fila* fila, unsigned int tempo) {
     pid_t pid;
     bool fila_Vazia;
     double parada = (double) tempo + 0.5;
-    char* argv[] = {NULL};
+    char* argv[] = {"Pn", NULL};
 
     fila_Vazia = vazia(fila);
   
@@ -578,7 +582,8 @@ void executaRR(Fila* fila, unsigned int tempo) {
         Prog* RR = fila->frente;
 
         if((pid = fork()) == 0) {
-            execv(RR->nome, argv);
+            argv[0] = RR->nome;
+            execv(argv[0], argv);
         }
 
         else {  

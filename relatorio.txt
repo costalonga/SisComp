@@ -4,46 +4,223 @@ Monitor: Fernando
 Alunos: Guilherme Lacerda - 1421134
         Marcelo Costalonga - 1421229
         
-    ➤ Modo de Executar o projeto:
-        
-        ...
-        
-    ➤ Programas executados e casos de teste:
+
+ Nesse relatório estão sendo indicados os seguintes itens nesta ordem: 
+   
+   - Modo de Executar o projeto,
+   - Descrição do Funcionamento do Programa,
+   - Programas executados e casos de teste,
+   - Conclusão,
+   - Descrição dos Programas CPU-bound e IO-bound
     
-        ...
+   Cada um desses itens está indicado por "➤➤", e seus subitens por "➤"  
+   
+   
         
-    ➤ Comentários:
-    ➤ Descrição dos Programas CPU-bound e IO-bound
+    ➤➤ Modo de Rodar e Executar o projeto:
+        
+        1) Compilar os programas IO e CPU bound gerando os processos a serem executados com os nomes P1,P2,...,P9
+           $ gcc -Wall P1 boundCPU.c
+           $ gcc -Wall P7 boundIO.c
+           
+        2) Compilar o modulo da estrutura
+           $ gcc -c estrutura.c
+        
+        3) Compilar o escalonador usando:
+           $ gcc -Wall -o escalonador escalonador.c estrutura.o
+       
+        4) Compilar o interpretador:
+           $ gcc -Wall -o int interpretador.c
+        
+        5) Executar o interpretador:
+           $ ./int   
+           
+        O arquivo "exec.txt" deve ser modificado, contendo a ordem dos processos.     
+        
+    
+    
+    ➤➤ Descrição do Funcionamento do Programa:
+    
+    Há três módulos principais:
+     - escalonador.c
+     - interpretador.c
+     - estruturas.c e estruturas.h
+    
+    O interpretador é responsável por ler o arquivo exec.txt e o escalonador determina a ordem de execução dos processos. Utilizamos memória compartilhada para fazer a comunição entre o escalonador e o interpretador. E o módulo de estruturas, corresponde as funções da nossa estrutura de fila utilizada. 
+    
+    A função principal irá atachar as memórias com shmat() e entra em um loop. Há um contador que fica sendo resetado a cada 60 segundos.
+    
+    A cada linha que o interpretador lê, o escalonador é comunicado e identifica o tipo processo que acabou de ser lido, se for:
+     - tipo 1 = Round Robin (RR)
+     - tipo 2 = Prioridade (PR)
+     - tipo 3 = Real Time (RT)
+    De acordo com o seu tipo ele será inserido numa fila coerente com o seu tipo.
+    E logo em seguida é feita a chamda das funções para executar os processos RT, PR e RR. 
+    Antes de executar um processo, é verificado se já existe algum processo rodando de acordo com suas prioridades.
+     
+   
+   
+   ➤➤ Programas executados e casos de teste:
+    
+        ➤ Usamos esse caso para verificar se os RT rodavam corretamente:
+        
+        Run P1 I=0 D=2
+        Run P2 I=P1 D=6
+        Run P3 I=15 D=1
+        Run P4 I=15 D=2
+        Run P5 I=P4 D=7
+        Run P6 I=P3 D=2
+        
+        ➤ Output:
+
+        Escalonador foi criado.
+        ID do processo criado aos 0 segundos: 9262
+        P1 Started - CPU Bound Process
+        Processo de ID 9262 parado aos 2 segundos.
+        ID do processo criado aos 3 segundos: 9263
+        P2 Started - CPU Bound Process
+        Processo de ID 9263 parado aos 9 segundos.
+        ID do processo criado aos 15 segundos: 9266
+        P3 Started - CPU Bound Process
+        Processo de ID 9266 parado aos 16 segundos.
+        ID do processo criado aos 17 segundos: 9267
+        P6 Started - CPU Bound Process
+        Processo de ID 9267 parado aos 19 segundos.
+        1 Retomando o processo de ID 9262
+        Processo de ID 9262 parado aos 2 segundos.
+        1 Retomando o processo de ID 9263
+        PROCESSO 2 CPU fibonacci number#899999 =  966341103397823
+        Processo de ID 9263 parado aos 9 segundos.
+        1 Retomando o processo de ID 9266
+        Processo de ID 9266 parado aos 16 segundos.
+        1 Retomando o processo de ID 9267
+        Processo de ID 9267 parado aos 19 segundos.
+
+            
+        ➤ Usamos esses testes para verificar se os RR eram escalonados corretamente com os RT:
+        
+        Run P1 I=0 D=5
+        Run P2
+        Run P3
+        Run P4
+        Run P5 I=P1 D=5
+        Run P6 I=15 D=2
+                
+        ➤ Output:
+
+        Escalonador foi criado.
+        ID do processo criado aos 0 segundos: 9312
+        P1 Started - CPU Bound Process
+        Processo de ID 9312 parado aos 5 segundos.
+        Executando programa (RR) de ID 9313 aos 5 segundos
+        P2 Started - CPU Bound Process
+        Programa de ID 9313 terminado aos 5.500000 segundos
+        ID do processo criado aos 6 segundos: 9314
+        P5 Started - CPU Bound Process
+        Processo de ID 9314 parado aos 11 segundos.
+        Executando programa (RR) de ID 9315 aos 11 segundos
+        P3 Started - CPU Bound Process
+        Programa de ID 9315 terminado aos 11.500000 segundos
+        Executando programa (RR) de ID 9316 aos 12 segundos
+        P4 Started - CPU Bound Process
+        Programa de ID 9316 terminado aos 12.500000 segundos
+        ID do processo criado aos 15 segundos: 9317
+        P6 Started - CPU Bound Process
+        Processo de ID 9317 parado aos 17 segundos.
+        1 Retomando o processo de ID 9312
+        Processo de ID 9312 parado aos 5 segundos.
+        1 Retomando o processo de ID 9314
+        PROCESSO 5 CPU fibonacci number#899999 =  966341103397823
+        Processo de ID 9314 parado aos 11 segundos.
+        1 Retomando o processo de ID 9317
+        Processo de ID 9317 parado aos 17 segundos.
+        
+        
+        ➤ Teste:
+        
+        Run P1 I=1 D=3
+        Run P2
+        Run P3
+        Run P4 I=6 D=1
+        Run P5
+        Run P6 I=15 D=2
+                
+        ➤ Output:
+        
+        Escalonador foi criado.
+        ID do processo criado aos 1 segundos: 9439
+        P1 Started - CPU Bound Process
+        Processo de ID 9439 parado aos 4 segundos.
+        Executando programa (RR) de ID 9440 aos 4 segundos
+        P2 Started - CPU Bound Process
+        Programa de ID 9440 terminado aos 4.500000 segundos
+        Executando programa (RR) de ID 9441 aos 5 segundos
+        P3 Started - CPU Bound Process
+        Programa de ID 9441 terminado aos 5.500000 segundos
+        ID do processo criado aos 6 segundos: 9442
+        P4 Started - CPU Bound Process
+        Processo de ID 9442 parado aos 7 segundos.
+        Executando programa (RR) de ID 9443 aos 7 segundos
+        P5 Started - CPU Bound Process
+        Programa de ID 9443 terminado aos 7.500000 segundos
+        ID do processo criado aos 15 segundos: 9444
+        P6 Started - CPU Bound Process
+        Processo de ID 9444 parado aos 17 segundos.
+        1 Retomando o processo de ID 9439
+        Processo de ID 9439 parado aos 4 segundos.
+        1 Retomando o processo de ID 9442
+        Processo de ID 9442 parado aos 7 segundos.
+        1 Retomando o processo de ID 9444
+        Processo de ID 9444 parado aos 17 segundos.
+        1 Retomando o processo de ID 9439
+
+
+                
+    ➤➤ Conclusão:
+    
+    O programa funciona corretamente se comecar com um RT. Tentamos descobrir o motivo, porem nao achamos. Por exemplo, se o programa comecar com um de prioridades, o programa nao funciona corretamente. Outro problema identificado, caso o programa comece, por exemplo, com tres RR, somente o primeiro sera lido. Tambem nao conseguimos identificar o bug.
+    
+    
+    
+    ➤➤ Descrição dos Programas CPU-bound e IO-bound:
+    
     Todos os programas do tipo CPU-bound tem a mesma funcionalidade, que é calcular parte da sequência de Fibonacci e imprimir seus valores entre longos intervalos. Enquanto, os programas do tipo IO-bound calculam as potências dos números a partir de 2 em diante, até causar overflow, diferente do CPU-bound, seus valores são impressos a cada instante.
+    
+    Sempre ao começo de um processo seu nome será impresso, juntamento ao seu tipo, exemplo: "P1 Started - CPU bound Process".
+
     Analisamos o uso %CPU utilizando o comando $ps u, para verificarmos a diferença entre os dois processos. Segue abaixo os valores observados:
     
-    ➤Processo CPU-bound rodando sozinho: %CPU usado 89.6 
+        ➤Processo CPU-bound rodando sozinho: %CPU usado 89.6 
 
-costalonga@Celo-VirtualBox:~/Documents$ ps u 
-USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-costalo+  7046 89.6  0.2  11420  7808 pts/0    R+   21:14   1:07 ./CPUboundProcess
-costalo+  7064  0.0  0.1  46772  3592 pts/1    R+   21:15   0:00 ps u
+        costalonga@Celo-VirtualBox:~/Documents$ ps u 
+        USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+        costalo+  7046 89.6  0.2  11420  7808 pts/0    R+   21:14   1:07 ./CPUboundProcess
+        costalo+  7064  0.0  0.1  46772  3592 pts/1    R+   21:15   0:00 ps u
 
 
-    ➤Processo IO-bound rodando sozinho: %CPU usado 0.2
+        ➤Processo IO-bound rodando sozinho: %CPU usado 0.2
+            
+        costalonga@Celo-VirtualBox:~/Documents$ ps u 
+        USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+        costalo+  7069  0.2  0.0   4508   724 pts/2    S+   21:17   0:00 ./IOboundProcess
+        costalo+  7071  0.0  0.1  46772  3660 pts/1    R+   21:17   0:00 ps u
+
+
+        ➤Processo IO-bound e CPU-bound rodando simultaneamente: 
+            %CPU usado pelo IO-bound: 0.3
+            %CPU usado pelo CPU-bound: 43.5
+
+        costalonga@Celo-VirtualBox:~/Documents$ ps u 
+        USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+        costalo+  7166  0.3  0.0   4508   744 pts/2    S+   21:22   0:00 ./IOboundProcess
+        costalo+  7167 43.5  0.2  11288  7804 pts/0    R+   21:22   0:02 ./CPUboundProcess
+        costalo+  7169  0.0  0.1  46772  3688 pts/1    R+   21:22   0:00 ps u
+        
+                 
+
     
-costalonga@Celo-VirtualBox:~/Documents$ ps u 
-USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-costalo+  7069  0.2  0.0   4508   724 pts/2    S+   21:17   0:00 ./IOboundProcess
-costalo+  7071  0.0  0.1  46772  3660 pts/1    R+   21:17   0:00 ps u
 
-
-    ➤Processo IO-bound e CPU-bound rodando simultaneamente: 
-    %CPU usado pelo IO-bound: 0.3
-    %CPU usado pelo CPU-bound: 43.5
-
-costalonga@Celo-VirtualBox:~/Documents$ ps u 
-USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-costalo+  7166  0.3  0.0   4508   744 pts/2    S+   21:22   0:00 ./IOboundProcess
-costalo+  7167 43.5  0.2  11288  7804 pts/0    R+   21:22   0:02 ./CPUboundProcess
-costalo+  7169  0.0  0.1  46772  3688 pts/1    R+   21:22   0:00 ps u
-             
-      
+   
 
 
 

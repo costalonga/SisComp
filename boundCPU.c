@@ -9,6 +9,8 @@
 
 int main() {
     char* stProcess= "PROCESSO 1 CPU"; //TODO alterar mensagem de acordo com cada processo   
+    char* Pini = "P1 Started - CPU Bound Process\n";
+    printf("%s",Pini);   
     
     long long int fibo[SIZE];
     long long int c1,c2,c3;
